@@ -10,11 +10,21 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 
-[Quick Start](#quick-start) · [Core Features](#core-features) · [Deployment](#production-deployment) · [Architecture](#architecture) · [Development](#local-development)
+[Live Demo](#live-demo) · [Quick Start](#quick-start) · [Core Features](#core-features) · [Deployment](#production-deployment) · [Architecture](#architecture) · [Development](#local-development)
 
 ![iForge Kanban Preview](screenshot-kanban.png)
 
 ![iForge Task-MR](screenshot-task-mr.png)
+
+## Live Demo
+
+Visit [https://demo.iforge-go.com](https://demo.iforge-go.com) to explore the full platform.
+
+| Username | Password | Role |
+|----------|----------|------|
+| iforge   | iforge   | Regular user |
+
+The demo site resets data daily at 3:00 AM (UTC+8).
 
 </div>
 
