@@ -11,6 +11,7 @@ import (
 var (
 	ErrLabelNotFound    = errors.New("label not found")
 	ErrInvalidLabelName = errors.New("invalid label name")
+	ErrLabelExists      = errors.New("label already exists")
 )
 
 // LabelService handles label operations
@@ -26,6 +27,16 @@ func NewLabelService(db *gorm.DB) *LabelService {
 // CreateLabel creates a new label
 func (s *LabelService) CreateLabel(owner, repo, name, color string) (*model.Label, error) {
 	if err := validateLabelName(name); err != nil {
+		return nil, err
+	}
+
+	// Check if label already exists
+	var existing model.Label
+	err := s.db.Where("user_name = ? AND repository_name = ? AND label_name = ?", owner, repo, name).First(&existing).Error
+	if err == nil {
+		return nil, ErrLabelExists
+	}
+	if !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 

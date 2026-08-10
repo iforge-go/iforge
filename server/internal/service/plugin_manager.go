@@ -105,6 +105,12 @@ func (pm *PluginManager) loadPluginEventHandlers(plugin *model.Plugin) {
 
 // RegisterPlugin registers a new plugin
 func (pm *PluginManager) RegisterPlugin(plugin *model.Plugin) error {
+	// Check if plugin with same name already exists
+	var existing model.Plugin
+	if err := pm.db.Where("name = ?", plugin.Name).First(&existing).Error; err == nil {
+		return ErrPluginExists
+	}
+
 	plugin.CreatedAt = time.Now()
 	plugin.UpdatedAt = time.Now()
 

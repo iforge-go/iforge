@@ -283,7 +283,7 @@ func TestRunnerService_UpdateJobFromRunner(t *testing.T) {
 	defer cleanupTestDB(db)
 	service := NewRunnerService(db)
 
-	// Create pipeline and job
+	// Create pipeline
 	pipeline := &model.Pipeline{
 		UserName:       "testuser",
 		RepositoryName: "testrepo",
@@ -297,20 +297,28 @@ func TestRunnerService_UpdateJobFromRunner(t *testing.T) {
 	}
 	db.Create(pipeline)
 
-	runnerID := int64(1)
+	// Create runner (required by UpdateJobFromRunner)
+	runner := &model.Runner{
+		Name:     "test-runner",
+		Status:   "idle",
+		Type:     "shell",
+		UserName: strPtr("testuser"),
+	}
+	db.Create(runner)
+
 	job := &model.Job{
 		PipelineID: pipeline.ID,
 		JobName:    "build",
 		StageName:  "build",
 		Status:     model.JobStatusRunning,
-		RunnerID:   &runnerID,
+		RunnerID:   &runner.ID,
 		CreatedAt:  time.Now(),
 	}
 	db.Create(job)
 
 	// Update job status to success
 	exitCode := 0
-	err := service.UpdateJobFromRunner(job.ID, runnerID, model.JobStatusSuccess, &exitCode, nil)
+	err := service.UpdateJobFromRunner(job.ID, runner.ID, model.JobStatusSuccess, &exitCode, nil)
 	if err != nil {
 		t.Fatalf("UpdateJobFromRunner failed: %v", err)
 	}
@@ -556,4 +564,3 @@ func TestBuildJobEnvVars_InvalidJSON(t *testing.T) {
 		t.Error("Expected CI=true")
 	}
 }
-
