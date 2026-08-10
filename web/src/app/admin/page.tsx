@@ -44,6 +44,7 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
+    if (!user?.isAdmin) return
     const loadSystemInfo = async () => {
       try {
         const data = await api.getSystemInfo()
@@ -56,7 +57,7 @@ export default function AdminPage() {
       }
     }
     loadSystemInfo()
-  }, [])
+  }, [user?.isAdmin])
 
   useEffect(() => {
     if (uptimeSeconds <= 0) return
