@@ -14,10 +14,6 @@ export default function DatabaseViewer() {
   const [activeTable, setActiveTable] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadTables()
-  }, [])
-
   const loadTables = async () => {
     try {
       setLoading(true)
@@ -29,6 +25,10 @@ export default function DatabaseViewer() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadTables()
+  }, [])
 
   return (
     <Box borderWidth="1px" borderRadius="lg" bg="white">

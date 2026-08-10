@@ -22,12 +22,6 @@ export default function DatabaseTableDetail({
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    if (tableName) {
-      loadTableData()
-    }
-  }, [tableName])
-
   const loadTableData = async () => {
     if (!tableName) return
 
@@ -45,6 +39,12 @@ export default function DatabaseTableDetail({
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (tableName) {
+      loadTableData()
+    }
+  }, [tableName])
 
   if (!tableName) {
     return (

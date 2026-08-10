@@ -67,10 +67,6 @@ export default function WebhookManager({ owner, repoName }: WebhookManagerProps)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
 
-  useEffect(() => {
-    loadWebhooks()
-  }, [owner, repoName])
-
   const loadWebhooks = async () => {
     setLoading(true)
     try {
@@ -87,6 +83,10 @@ export default function WebhookManager({ owner, repoName }: WebhookManagerProps)
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadWebhooks()
+  }, [owner, repoName])
 
   const handleCreate = async () => {
     if (!newUrl) {

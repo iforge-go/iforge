@@ -104,13 +104,6 @@ export default function AIOptimizeModal<T extends OptimizeType = 'story'>({
   const streamRef = useRef<HTMLDivElement>(null)
   const processScrollRef = useRef<HTMLDivElement>(null)
 
-  // 打开时自动调用 AI 优化
-  useEffect(() => {
-    if (isOpen) {
-      loadOptimize()
-    }
-  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
-
   const loadOptimize = async () => {
     setLoading(true)
     setError(null)
@@ -179,6 +172,13 @@ export default function AIOptimizeModal<T extends OptimizeType = 'story'>({
       }
     })
   }
+
+  // 打开时自动调用 AI 优化
+  useEffect(() => {
+    if (isOpen) {
+      loadOptimize()
+    }
+  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const updateResult = (patch: Partial<OptimizeResult>) => {
     setResult((prev) => (prev ? ({ ...prev, ...patch } as OptimizeResult) : prev))

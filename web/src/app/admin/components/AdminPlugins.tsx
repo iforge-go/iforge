@@ -91,11 +91,6 @@ export default function AdminPlugins() {
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
   const cancelRef = useRef<HTMLButtonElement>(null!)
 
-  useEffect(() => {
-    loadPlugins()
-    loadTemplates()
-  }, [])
-
   const loadPlugins = async () => {
     try {
       const data = await api.listPlugins()
@@ -113,6 +108,11 @@ export default function AdminPlugins() {
       console.error('Failed to load templates:', error)
     }
   }
+
+  useEffect(() => {
+    loadPlugins()
+    loadTemplates()
+  }, [])
 
   const handleInstall = async () => {
     if (!selectedTemplate) return

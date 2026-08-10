@@ -49,10 +49,6 @@ export default function MilestoneDetailPage() {
   // Developer 及以上权限可以管理里程碑
   const canManageMilestone = userRole === 'owner' || userRole === 'member'
 
-  useEffect(() => {
-    loadMilestone()
-  }, [owner, repo, milestoneId])
-
   const loadMilestone = async () => {
     try {
       setLoading(true)
@@ -73,6 +69,10 @@ export default function MilestoneDetailPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadMilestone()
+  }, [owner, repo, milestoneId])
 
   const handleSave = async () => {
     if (!title.trim()) {

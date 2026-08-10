@@ -63,13 +63,6 @@ export default function AIDecomposeModal({
   const [thinkingText, setThinkingText] = useState('')
   const streamRef = useRef<HTMLDivElement>(null)
 
-  // 打开时自动调用 AI 拆解
-  useEffect(() => {
-    if (isOpen) {
-      loadDecompose()
-    }
-  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
-
   const loadDecompose = async () => {
     setLoading(true)
     setError(null)
@@ -218,6 +211,13 @@ export default function AIDecomposeModal({
     setThinkingText('')
     onClose()
   }
+
+  // 打开时自动调用 AI 拆解
+  useEffect(() => {
+    if (isOpen) {
+      loadDecompose()
+    }
+  }, [isOpen]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} size="2xl" blockScrollOnMount={false}>

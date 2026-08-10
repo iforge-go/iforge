@@ -33,10 +33,6 @@ export default function WikiPage() {
   const [pages, setPages] = useState<WikiPage[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    loadPages()
-  }, [owner, repoName])
-
   const loadPages = async () => {
     try {
       const data = await api.listWikiPages(owner, repoName)
@@ -47,6 +43,10 @@ export default function WikiPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadPages()
+  }, [owner, repoName])
 
   if (loading) {
     return (

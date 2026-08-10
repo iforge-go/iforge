@@ -37,10 +37,6 @@ export default function WikiDetailPage() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
 
-  useEffect(() => {
-    loadPage()
-  }, [owner, repoName, pageName])
-
   const loadPage = async () => {
     try {
       const data = await api.getWikiPage(owner, repoName, pageName)
@@ -56,6 +52,10 @@ export default function WikiDetailPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadPage()
+  }, [owner, repoName, pageName])
 
   const handleDelete = () => {
     setConfirmAction(() => async () => {

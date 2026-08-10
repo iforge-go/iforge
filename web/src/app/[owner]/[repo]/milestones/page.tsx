@@ -33,10 +33,6 @@ export default function MilestonesPage() {
   // Developer 及以上权限可以创建里程碑
   const canCreateMilestone = userRole === 'owner' || userRole === 'member'
 
-  useEffect(() => {
-    loadMilestones()
-  }, [owner, repo])
-
   const loadMilestones = async () => {
     try {
       setLoading(true)
@@ -49,6 +45,10 @@ export default function MilestonesPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadMilestones()
+  }, [owner, repo])
 
   const openMilestones = milestones.filter(m => !m.closedDate)
   const closedMilestones = milestones.filter(m => m.closedDate)

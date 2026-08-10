@@ -46,7 +46,8 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
-  const connect = useCallback(() => {
+  // connect as function declaration to avoid TDZ issues in onclose callback
+  function connect() {
     if (!user) return
     // 避免重复连接
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) return
@@ -91,7 +92,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
       // 让 onclose 处理重连
       ws.close()
     }
-  }, [user])
+  }
 
   useEffect(() => {
     if (!user) {
@@ -114,7 +115,7 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
         wsRef.current = null
       }
     }
-  }, [user, connect])
+  }, [user])
 
   return (
     <WebSocketContext.Provider value={{ isConnected, subscribe }}>

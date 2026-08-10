@@ -58,10 +58,6 @@ export default function SecretManager({ owner, repoName }: SecretManagerProps) {
   const [deleteTarget, setDeleteTarget] = useState<Secret | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  useEffect(() => {
-    loadSecrets()
-  }, [owner, repoName])
-
   const loadSecrets = async () => {
     setLoading(true)
     try {
@@ -73,6 +69,10 @@ export default function SecretManager({ owner, repoName }: SecretManagerProps) {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadSecrets()
+  }, [owner, repoName])
 
   const openCreate = () => {
     setEditKey('')

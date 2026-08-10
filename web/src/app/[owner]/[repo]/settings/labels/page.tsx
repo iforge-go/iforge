@@ -68,10 +68,6 @@ export default function LabelsPage() {
   // Developer 及以上权限可以管理标签
   const canManageLabels = userRole === 'owner' || userRole === 'member'
 
-  useEffect(() => {
-    loadLabels()
-  }, [owner, repoName])
-
   const loadLabels = async () => {
     try {
       setLoading(true)
@@ -88,6 +84,10 @@ export default function LabelsPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadLabels()
+  }, [owner, repoName])
 
   const handleCreateLabel = async () => {
     if (!newLabelName.trim()) {
