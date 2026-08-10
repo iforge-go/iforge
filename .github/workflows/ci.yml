@@ -90,13 +90,13 @@ jobs:
           fetch-depth: 0  # Shallow clones disabled for better analysis
       
       - name: Download backend coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: backend-coverage
           path: server/
       
       - name: Download frontend coverage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: frontend-coverage
           path: web/coverage/
