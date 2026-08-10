@@ -58,7 +58,8 @@
     "pageInfo": "Page {page} / {totalPages}",
     "itemRange": "Showing {start}-{end} of {total}",
     "notFound": "Not found",
-    "optional": "optional"
+    "optional": "Optional",
+    "forbidden": "Access denied. Admin privileges required."
   },
   "nav": {
     "dashboard": "Dashboard",

@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Container, Heading, HStack } from '@chakra-ui/react'
+import { Box, Container, Heading, HStack, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import AdminSidebar from './components/AdminSidebar'
 import type { AdminPage } from './components/AdminSidebar'
@@ -23,12 +23,25 @@ import AISettings from './components/settings/AISettings'
 import { api, SystemInfo } from '@/lib/api'
 import { useEffect, useState as useReactState } from 'react'
 import { useI18n } from '@/contexts/I18nContext'
+import { useCurrentUser } from '@/contexts/UserContext'
 
 export default function AdminPage() {
   const { t } = useI18n()
+  const { user, authLoading } = useCurrentUser()
   const [activePage, setActivePage] = useState<AdminPage>('overview')
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null)
   const [uptimeSeconds, setUptimeSeconds] = useState(0)
+
+  // Redirect non-admin users
+  if (!authLoading && user && !user.isAdmin) {
+    return (
+      <Box bg="myGray.50" minH="100vh">
+        <Container maxW="container.xl" py={8}>
+          <Text color="myGray.600" fontSize="lg">{t('common.forbidden')}</Text>
+        </Container>
+      </Box>
+    )
+  }
 
   useEffect(() => {
     const loadSystemInfo = async () => {
