@@ -32,17 +32,6 @@ export default function AdminPage() {
   const [systemInfo, setSystemInfo] = useState<SystemInfo | null>(null)
   const [uptimeSeconds, setUptimeSeconds] = useState(0)
 
-  // Redirect non-admin users
-  if (!authLoading && user && !user.isAdmin) {
-    return (
-      <Box bg="myGray.50" minH="100vh">
-        <Container maxW="container.xl" py={8}>
-          <Text color="myGray.600" fontSize="lg">{t('common.forbidden')}</Text>
-        </Container>
-      </Box>
-    )
-  }
-
   useEffect(() => {
     if (!user?.isAdmin) return
     const loadSystemInfo = async () => {
@@ -66,6 +55,17 @@ export default function AdminPage() {
     }, 1000)
     return () => clearInterval(timer)
   }, [uptimeSeconds])
+
+  // Redirect non-admin users (must be after all hooks)
+  if (!authLoading && user && !user.isAdmin) {
+    return (
+      <Box bg="myGray.50" minH="100vh">
+        <Container maxW="container.xl" py={8}>
+          <Text color="myGray.600" fontSize="lg">{t('common.forbidden')}</Text>
+        </Container>
+      </Box>
+    )
+  }
 
   const renderContent = () => {
     switch (activePage) {
