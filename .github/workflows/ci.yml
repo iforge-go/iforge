@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: api
+        working-directory: server
     steps:
       - uses: actions/checkout@v4
 
@@ -20,25 +20,25 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.26'
-          cache-dependency-path: api/go.sum
+          cache-dependency-path: server/go.sum
 
       - name: Download dependencies
         run: go mod download
 
-      - name: Build
-        run: go build -o /tmp/iforge ./cmd/server
-
       - name: Vet
         run: go vet ./...
 
+      - name: Build
+        run: go build -o /tmp/iforge ./cmd/server
+
       - name: Test with coverage
         run: go test ./... -v -count=1 -coverprofile=coverage.out -covermode=atomic
-      
+
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
-          path: api/coverage.out
+          path: server/coverage.out
           retention-days: 1
 
   frontend:
@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-coverage
-          path: api/
+          path: server/
       
       - name: Download frontend coverage
         uses: actions/download-artifact@v4
