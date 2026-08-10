@@ -1,0 +1,27 @@
+# 生产环境配置 - MySQL
+server:
+  http_port: 8081
+  ssh_port: 2022
+  ssh_enabled: true
+  external_url: "https://iforge-go.com"
+
+database:
+  driver: "mysql"
+  mysql:
+    host: "localhost"
+    port: 3306
+    user: "iforge"
+    password: "your_secure_password_here"
+    database: "iforge"
+    charset: "utf8mb4"
+    max_idle_conns: 10
+    max_open_conns: 30
+  conn_max_lifetime_seconds: 1800
+  conn_max_idle_time_seconds: 300
+
+log:
+  level: "info"
+  path: "/var/log/iforge"
+
+repository:
+  path: "/data/iforge/repositories"

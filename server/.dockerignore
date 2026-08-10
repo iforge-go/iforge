@@ -1,0 +1,15 @@
+# 数据目录（运行时生成，不应进入镜像）
+data
+logs
+
+# 二进制产物
+*.exe
+iforge
+
+# 版本控制
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode

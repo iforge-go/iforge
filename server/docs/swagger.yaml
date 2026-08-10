@@ -1,0 +1,1082 @@
+basePath: /api/v1
+definitions:
+  handler.CreateIssueRequest:
+    properties:
+      assignees:
+        items:
+          type: string
+        type: array
+      body:
+        type: string
+      labels:
+        items:
+          type: integer
+        type: array
+      milestone_id:
+        type: integer
+      title:
+        type: string
+    required:
+    - title
+    type: object
+  handler.CreateRepositoryRequest:
+    properties:
+      autoInit:
+        type: boolean
+      description:
+        type: string
+      name:
+        type: string
+      owner:
+        description: 'Optional: specify owner (user or organization)'
+        type: string
+      private:
+        type: boolean
+    required:
+    - name
+    type: object
+  handler.LoginRequest:
+    properties:
+      password:
+        type: string
+      userName:
+        type: string
+    required:
+    - password
+    - userName
+    type: object
+  handler.LoginResponse:
+    properties:
+      token:
+        type: string
+      user: {}
+    type: object
+  handler.RegisterRequest:
+    properties:
+      fullName:
+        type: string
+      mailAddress:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - fullName
+    - mailAddress
+    - password
+    - username
+    type: object
+  model.Account:
+    properties:
+      description:
+        type: string
+      fullName:
+        type: string
+      image:
+        type: string
+      isAdmin:
+        type: boolean
+      isOrganization:
+        type: boolean
+      isRemoved:
+        type: boolean
+      lastLoginDate:
+        type: string
+      mailAddress:
+        type: string
+      registeredDate:
+        type: string
+      updatedDate:
+        type: string
+      url:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.Issue:
+    properties:
+      closeReason:
+        type: string
+      closed:
+        type: boolean
+      content:
+        type: string
+      isMergeRequest:
+        type: boolean
+      issueId:
+        type: integer
+      locked:
+        type: boolean
+      milestoneId:
+        type: integer
+      openedUserName:
+        type: string
+      priorityId:
+        type: integer
+      registeredDate:
+        type: string
+      repositoryName:
+        type: string
+      title:
+        type: string
+      updatedDate:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.Repository:
+    properties:
+      defaultBranch:
+        type: string
+      description:
+        type: string
+      isArchived:
+        type: boolean
+      isPrivate:
+        type: boolean
+      isTemplate:
+        type: boolean
+      lastActivityDate:
+        type: string
+      options:
+        $ref: '#/definitions/model.RepositoryOptions'
+      originRepositoryName:
+        type: string
+      originUserName:
+        type: string
+      parentRepositoryName:
+        type: string
+      parentUserName:
+        type: string
+      registeredDate:
+        type: string
+      repositoryName:
+        type: string
+      updatedDate:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.RepositoryMirror:
+    properties:
+      authentication:
+        type: string
+      enabled:
+        type: boolean
+      lastSyncDate:
+        type: string
+      mirrorUrl:
+        type: string
+      nextSyncDate:
+        type: string
+      password:
+        type: string
+      repositoryName:
+        type: string
+      sshKey:
+        type: string
+      syncInterval:
+        type: integer
+      syncOnPush:
+        type: boolean
+      userName:
+        type: string
+      username:
+        type: string
+    type: object
+  model.RepositoryOptions:
+    properties:
+      allowFork:
+        type: boolean
+      allowMerge:
+        type: boolean
+      allowRebase:
+        type: boolean
+      allowRebaseMerge:
+        type: boolean
+      allowSquash:
+        type: boolean
+      defaultMergeOption:
+        type: string
+      externalIssuesUrl:
+        type: string
+      externalWikiUrl:
+        type: string
+      issuesOption:
+        type: string
+      mergeOptions:
+        type: string
+      safeMode:
+        type: boolean
+      wikiOption:
+        type: string
+    type: object
+  service.ContributorStats:
+    properties:
+      additions:
+        type: integer
+      commits:
+        type: integer
+      deletions:
+        type: integer
+      email:
+        type: string
+      filesChanged:
+        type: integer
+      firstCommit:
+        type: string
+      lastCommit:
+        type: string
+      name:
+        type: string
+    type: object
+host: localhost:8081
+info:
+  contact: {}
+  description: iForge API - A modern Git hosting platform
+  title: iForge API
+  version: "1.0"
+paths:
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return session token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Login successful
+          schema:
+            $ref: '#/definitions/handler.LoginResponse'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Invalid credentials
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - auth
+  /api/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created
+          schema:
+            $ref: '#/definitions/model.Account'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: User already exists
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User registration
+      tags:
+      - auth
+  /api/v1/repos:
+    get:
+      description: List all visible repositories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of repositories
+          schema:
+            items:
+              $ref: '#/definitions/model.Repository'
+            type: array
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List repositories
+      tags:
+      - repositories
+    post:
+      consumes:
+      - application/json
+      description: Create a new repository
+      parameters:
+      - description: Repository details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateRepositoryRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Repository created
+          schema:
+            $ref: '#/definitions/model.Repository'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create repository
+      tags:
+      - repositories
+  /api/v1/repos/{owner}/{repo}:
+    get:
+      description: Get repository details by owner and name
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Repository details
+          schema:
+            $ref: '#/definitions/model.Repository'
+        "404":
+          description: Repository not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get repository
+      tags:
+      - repositories
+  /api/v1/repos/{owner}/{repo}/issues:
+    get:
+      description: List issues for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - default: open
+        description: Issue state (open/closed)
+        in: query
+        name: state
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 30
+        description: Items per page
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of issues
+          schema:
+            items:
+              $ref: '#/definitions/model.Issue'
+            type: array
+        "404":
+          description: Repository not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List issues
+      tags:
+      - issues
+    post:
+      consumes:
+      - application/json
+      description: Create a new issue
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Issue details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateIssueRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Issue created
+          schema:
+            $ref: '#/definitions/model.Issue'
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Repository not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create issue
+      tags:
+      - issues
+  /api/v1/repos/{owner}/{repo}/issues/{id}:
+    get:
+      description: Get issue details by ID
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Issue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Issue details
+          schema:
+            $ref: '#/definitions/model.Issue'
+        "400":
+          description: Invalid issue number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Issue not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get issue
+      tags:
+      - issues
+  /api/v1/repos/{owner}/{repo}/issues/{id}/assignees:
+    get:
+      description: List all assignees for an issue
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Issue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Assignees list
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid issue number
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Repository not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List assignees
+      tags:
+      - issues
+  /api/v1/repos/{owner}/{repo}/issues/{id}/assignees/{username}:
+    delete:
+      description: Remove an assignee from an issue
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Issue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Username to remove
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated assignees list
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid issue number or username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Write permission required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Issue not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Remove assignee
+      tags:
+      - issues
+    post:
+      description: Assign a user to an issue
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Issue ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Username to assign
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated assignees list
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid issue number or username
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Write permission required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Issue not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Add assignee
+      tags:
+      - issues
+  /api/v1/repos/{owner}/{repo}/lfs/objects:
+    get:
+      description: List all Git LFS objects stored in a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 50
+        description: Items per page (max 200)
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: LFS objects list with total count
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Repository not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to list LFS objects
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: List LFS objects
+      tags:
+      - lfs
+  /api/v1/repos/{owner}/{repo}/lfs/objects/{oid}:
+    delete:
+      description: Delete a Git LFS object (metadata and disk file) from a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: LFS object OID (SHA256 hash)
+        in: path
+        name: oid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: LFS object deleted
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Write permission required
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: LFS object not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Failed to delete LFS object
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete LFS object
+      tags:
+      - lfs
+  /api/v1/user:
+    get:
+      description: Get the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Current user
+          schema:
+            $ref: '#/definitions/model.Account'
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - auth
+  /repos/{owner}/{repo}/contributors:
+    get:
+      consumes:
+      - application/json
+      description: Get contributor statistics for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/service.ContributorStats'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get repository contributors
+      tags:
+      - contributors
+  /repos/{owner}/{repo}/mirror:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the mirror configuration for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete repository mirror configuration
+      tags:
+      - mirrors
+    get:
+      consumes:
+      - application/json
+      description: Get the mirror configuration for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RepositoryMirror'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get repository mirror configuration
+      tags:
+      - mirrors
+    post:
+      consumes:
+      - application/json
+      description: Create a new mirror configuration for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Mirror configuration
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RepositoryMirror'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.RepositoryMirror'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create repository mirror configuration
+      tags:
+      - mirrors
+    put:
+      consumes:
+      - application/json
+      description: Update the mirror configuration for a repository
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      - description: Mirror configuration
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.RepositoryMirror'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.RepositoryMirror'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update repository mirror configuration
+      tags:
+      - mirrors
+  /repos/{owner}/{repo}/mirror/sync:
+    post:
+      consumes:
+      - application/json
+      description: Manually trigger a sync for the repository mirror
+      parameters:
+      - description: Repository owner
+        in: path
+        name: owner
+        required: true
+        type: string
+      - description: Repository name
+        in: path
+        name: repo
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Manually sync repository mirror
+      tags:
+      - mirrors
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

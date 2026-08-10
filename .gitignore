@@ -1,0 +1,38 @@
+# Runtime data
+server/cmd/server/data/
+data/
+server/bin/
+
+# SQLite temp files
+*.db-shm
+*.db-wal
+
+# Server runtime (logs, ssh keys)
+server/cmd/server/logs/
+server/cmd/server/ssh/
+
+# Environment variables（.env.example 保留作为模板，实际 .env 不入库）
+.env
+.env.local
+.env.*.local
+
+# Local config overrides
+server/config.yaml
+
+# IDE
+.idea/
+.vscode/
+.trae/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build output
+web/.next/
+web/out/
+
+# Executables
+*.exe*

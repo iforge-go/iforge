@@ -1,0 +1,54 @@
+# iForge 配置文件示例
+# 复制此文件为 config.yaml 并修改配置
+
+# 服务器配置
+server:
+  http_port: 8081
+  ssh_port: 2022
+  ssh_enabled: true
+  external_url: "http://localhost:8081"
+
+# 数据库配置
+# 支持: sqlite, mysql, postgres
+database:
+  driver: "mysql"  # 默认使用 mysql
+  
+  # SQLite 配置（开发环境）
+  # driver: "sqlite"
+  # sqlite:
+  #   path: "./data/iforge.db"
+  
+  # MySQL 配置（生产环境默认）
+  mysql:
+    host: "localhost"
+    port: 3306
+    user: "iforge"
+    password: "iforge_password"
+    database: "iforge"
+    charset: "utf8mb4"
+    max_idle_conns: 10
+    max_open_conns: 30
+  
+  # PostgreSQL 配置（生产环境可选）
+  # postgres:
+  #   host: "localhost"
+  #   port: 5432
+  #   user: "iforge"
+  #   password: "iforge_password"
+  #   database: "iforge"
+  #   sslmode: "disable"
+  #   max_idle_conns: 10
+  #   max_open_conns: 30
+
+  # Recycle long-lived network connections before infrastructure timeouts.
+  conn_max_lifetime_seconds: 1800
+  conn_max_idle_time_seconds: 300
+
+# 日志配置
+log:
+  level: "info"  # debug, info, warn, error
+  path: "./logs"
+
+# 仓库存储路径
+repository:
+  path: "./repositories"

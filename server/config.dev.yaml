@@ -1,0 +1,18 @@
+# 开发环境配置 - 使用 SQLite
+server:
+  http_port: 8081
+  ssh_port: 2022
+  ssh_enabled: true
+  external_url: "http://localhost:8081"
+
+database:
+  driver: "sqlite"
+  sqlite:
+    path: "./data/iforge.db"
+
+log:
+  level: "debug"
+  path: "./logs"
+
+repository:
+  path: "./repositories"

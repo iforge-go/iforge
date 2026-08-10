@@ -1,0 +1,126 @@
+# ============================================================
+# iForge Docker Compose 部署
+# 启动：docker compose up -d
+# 查看日志：docker compose logs -f
+# 停止：docker compose down
+# ============================================================
+# 数据库切换：
+#   开发环境（默认 SQLite）：docker compose up -d
+#   生产环境（MySQL）：docker compose --profile mysql up -d
+#   生产环境（PostgreSQL）：docker compose --profile postgres up -d
+# ============================================================
+
+services:
+  # ---- MySQL（生产环境，profile: mysql）----
+  mysql:
+    image: mysql:8.0
+    container_name: iforge-mysql
+    restart: unless-stopped
+    profiles: ["mysql"]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-iforge_root_pass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-iforge}
+      MYSQL_USER: ${MYSQL_USER:-iforge}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-iforge_password}
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ---- PostgreSQL（生产环境，profile: postgres）----
+  postgres:
+    image: postgres:16-alpine
+    container_name: iforge-postgres
+    restart: unless-stopped
+    profiles: ["postgres"]
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-iforge}
+      POSTGRES_USER: ${POSTGRES_USER:-iforge}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-iforge_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U iforge"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+    container_name: iforge-server
+    restart: unless-stopped
+    environment:
+      # 端口（容器内固定，与 Dockerfile EXPOSE 对齐）
+      - IFORGE_HTTP_PORT=8081
+      - IFORGE_SSH_PORT=2022
+      - IFORGE_SSH_ENABLED=${IFORGE_SSH_ENABLED:-true}
+      # 会话密钥：生产环境务必在 .env 中设置固定值
+      - IFORGE_SESSION_SECRET=${IFORGE_SESSION_SECRET:-}
+      # CORS 允许的前端来源（* = 反射任意 Origin，适合自托管/局域网）
+      - IFORGE_CORS_ORIGINS=${IFORGE_CORS_ORIGINS:-*}
+      # 禁用内置执行器，所有 CI/CD job 由外置 runner 处理
+      - IFORGE_DISABLE_BUILTIN_EXECUTOR=${IFORGE_DISABLE_BUILTIN_EXECUTOR:-false}
+      # ---- 数据库配置 ----
+      # 默认 SQLite（开发），通过 profile 切换 MySQL/Postgres
+      - IFORGE_DB_DRIVER=${IFORGE_DB_DRIVER:-sqlite}
+      - IFORGE_DB_MAX_IDLE_CONNS=${IFORGE_DB_MAX_IDLE_CONNS:-10}
+      - IFORGE_DB_MAX_OPEN_CONNS=${IFORGE_DB_MAX_OPEN_CONNS:-30}
+      - IFORGE_DB_CONN_MAX_LIFETIME_SECONDS=${IFORGE_DB_CONN_MAX_LIFETIME_SECONDS:-1800}
+      - IFORGE_DB_CONN_MAX_IDLE_TIME_SECONDS=${IFORGE_DB_CONN_MAX_IDLE_TIME_SECONDS:-300}
+      # MySQL 连接（profile: mysql 时生效）
+      - IFORGE_MYSQL_HOST=mysql
+      - IFORGE_MYSQL_PORT=3306
+      - IFORGE_MYSQL_USER=${MYSQL_USER:-iforge}
+      - IFORGE_MYSQL_PASSWORD=${MYSQL_PASSWORD:-iforge_password}
+      - IFORGE_MYSQL_DATABASE=${MYSQL_DATABASE:-iforge}
+      # PostgreSQL 连接（profile: postgres 时生效）
+      - IFORGE_POSTGRES_HOST=postgres
+      - IFORGE_POSTGRES_PORT=5432
+      - IFORGE_POSTGRES_USER=${POSTGRES_USER:-iforge}
+      - IFORGE_POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-iforge_password}
+      - IFORGE_POSTGRES_DATABASE=${POSTGRES_DB:-iforge}
+    ports:
+      # HTTP（浏览器 + Git HTTP 协议）
+      - "${IFORGE_HTTP_PORT:-8080}:8081"
+      # SSH（Git SSH 协议）
+      - "${IFORGE_SSH_PORT:-22}:2022"
+    volumes:
+      # 数据持久化：数据库（SQLite）、日志、Git 仓库
+      - ./data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+        required: false
+      postgres:
+        condition: service_healthy
+        required: false
+
+  web:
+    build:
+      context: ./web
+      args:
+        # 可选：固定后端 API 地址（默认留空，前端运行时按浏览器 hostname 自动适配）
+        - NEXT_PUBLIC_API_BASE=${NEXT_PUBLIC_API_BASE:-}
+    container_name: iforge-web
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      # SSR 数据请求走 Docker 内部网络（web 容器 → server 容器）
+      # 浏览器端请求不受此影响，仍按 window.location.hostname 动态适配
+      - SERVER_API_URL=http://server:8081/api/v1
+    ports:
+      - "3000:3001"
+
+volumes:
+  mysql_data:
+  postgres_data:

@@ -1,0 +1,18 @@
+# 依赖目录（构建阶段会重新 npm ci）
+node_modules
+
+# 构建产物（构建阶段会重新 npm run build）
+.next
+out
+
+# 版本控制
+.git
+.gitignore
+
+# 日志
+*.log
+npm-debug.log*
+
+# IDE
+.idea
+.vscode

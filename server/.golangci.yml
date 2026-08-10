@@ -1,0 +1,75 @@
+# golangci-lint configuration for iForge
+# Run: golangci-lint run
+
+run:
+  timeout: 5m
+  go: '1.21'
+
+linters:
+  enable:
+    - errcheck      # 检查未处理的错误
+    - gosimple      # 简化代码
+    - govet         # 检查可疑结构
+    - ineffassign   # 检查未使用的赋值
+    - staticcheck   # 静态分析
+    - typecheck     # 类型检查
+    - unused        # 检查未使用的代码
+    - gofmt         # 格式化检查
+    - goimports     # import 排序和格式化
+    - revive        # 通用 lint 规则
+    - misspell      # 拼写检查
+    - gocritic      # 代码风格检查
+    - gosec         # 安全检查
+
+linters-settings:
+  errcheck:
+    check-type-assertions: true
+    check-blank: false
+
+  govet:
+    enable-all: true
+    disable:
+      - fieldalignment  # 过于严格
+      - shadow          # 变量遮蔽检查（允许）
+
+  revive:
+    rules:
+      - name: exported
+        arguments:
+          - disableStutteringCheck
+      - name: unexported-return
+        disabled: true
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+
+  gosec:
+    excludes:
+      - G104  # 与 errcheck 重复
+      - G304  # 文件路径变量（允许动态路径）
+
+issues:
+  exclude-rules:
+    # 测试文件放宽限制
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+        - gocritic
+
+    # 忽略 generated 文件
+    - path: \.pb\.go$
+      linters:
+        - all
+
+  max-issues-per-linter: 50
+  max-same-issues: 5
+
+output:
+  formats:
+    - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true

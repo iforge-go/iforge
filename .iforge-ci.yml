@@ -1,0 +1,86 @@
+# iforge CI/CD 配置
+# 所有 job 均指定 image，由 Docker Executor 在容器内执行
+# 文档: https://github.com/iforge/iforge/blob/main/docs/cicd.md
+
+stages:
+  - build
+  - test
+  - lint
+
+variables:
+  GO_VERSION: "1.26"
+  # 国内镜像源（避免 proxy.golang.org / npmjs.org 超时）
+  GOPROXY: "https://goproxy.cn,direct"
+  npm_config_registry: "https://registry.npmmirror.com"
+  # npm 缓存目录(cd web 后相对路径 .cache/npm,即 workDir/web/.cache/npm)
+  npm_config_cache: .cache/npm
+
+# 后端构建
+build:backend:
+  stage: build
+  image: golang:1.26
+  script:
+    - cd server
+    - go mod download
+    - go build -o ../tmp/iforge-server ./cmd/server
+  artifacts:
+    paths:
+      - tmp/iforge-server
+    expire_in: 1 week
+  only:
+    - main
+    - dev
+
+# 后端测试
+test:backend:
+  stage: test
+  image: golang:1.26
+  script:
+    - cd server
+    - go test ./... -count=1 -v
+  only:
+    - main
+    - dev
+
+# 后端 vet
+lint:backend:
+  stage: lint
+  image: golang:1.26
+  script:
+    - cd server
+    - go vet ./...
+  only:
+    - main
+    - dev
+
+# 前端构建
+build:frontend:
+  stage: build
+  image: node:20
+  script:
+    - cd web
+    - npm ci
+    - npm run build
+  cache:
+    paths:
+      - web/.cache
+    key: npm-v1
+  only:
+    - main
+    - dev
+
+# 前端 lint
+lint:frontend:
+  stage: lint
+  image: node:20
+  script:
+    - cd web
+    - npm ci
+    - npm run lint
+  cache:
+    paths:
+      - web/.cache
+    key: npm-v1
+  only:
+    - main
+    - dev

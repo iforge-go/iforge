@@ -1,0 +1,28 @@
+# 生产环境配置 - PostgreSQL
+server:
+  http_port: 8081
+  ssh_port: 2022
+  ssh_enabled: true
+  external_url: "https://iforge-go.com"
+
+database:
+  driver: "postgres"
+  postgres:
+    host: "localhost"
+    port: 5432
+    user: "iforge"
+    password: "your_secure_password_here"
+    database: "iforge"
+    # Use verify-full with sslrootcert in production when the database is remote.
+    sslmode: "require"
+    max_idle_conns: 10
+    max_open_conns: 30
+  conn_max_lifetime_seconds: 1800
+  conn_max_idle_time_seconds: 300
+
+log:
+  level: "info"
+  path: "/var/log/iforge"
+
+repository:
+  path: "/data/iforge/repositories"
