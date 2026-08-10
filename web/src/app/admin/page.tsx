@@ -56,8 +56,13 @@ export default function AdminPage() {
     return () => clearInterval(timer)
   }, [uptimeSeconds])
 
-  // Redirect non-admin users (must be after all hooks)
-  if (!authLoading && user && !user.isAdmin) {
+  // Guard: show nothing while auth is loading (prevents flash of admin UI)
+  if (authLoading) {
+    return null
+  }
+
+  // Guard: not logged in or non-admin
+  if (!user || !user.isAdmin) {
     return (
       <Box bg="myGray.50" minH="100vh">
         <Container maxW="container.xl" py={8}>
