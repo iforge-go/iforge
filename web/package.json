@@ -16,7 +16,7 @@
     "@dnd-kit/sortable": "^8.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
+    "@emotion/styled": "^11.14.1",
     "@tanstack/react-virtual": "^3.14.9",
     "dompurify": "^3.4.12",
     "framer-motion": "^10.16.16",
