@@ -10,11 +10,21 @@
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 
-[快速开始](#快速开始) · [核心能力](#核心能力) · [部署](#生产部署) · [架构](#架构) · [开发](#本地开发)
+[在线演示](#在线演示) · [快速开始](#快速开始) · [核心能力](#核心能力) · [部署](#生产部署) · [架构](#架构) · [开发](#本地开发)
 
 ![iForge 看板预览](screenshot-kanban.png)
 
 ![iForge Task-MR](screenshot-task-mr.png)
+
+## 在线演示
+
+访问 [https://demo.iforge-go.com](https://demo.iforge-go.com) 体验完整功能。
+
+| 用户名 | 密码 | 角色 |
+|--------|------|------|
+| iforge | iforge | 管理员 |
+
+演示站每日凌晨 3:00 自动重置数据。
 
 </div>
 
