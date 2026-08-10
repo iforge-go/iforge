@@ -2,7 +2,7 @@ import type { User } from '../lib/types'
 
 type RequestFn = <T>(endpoint: string, options?: { method?: string; body?: any; token?: string | null }) => Promise<T>
 
-export function createAuthApi(request: RequestFn, baseUrl: string) {
+export function createAuthApi(request: RequestFn, _baseUrl: string) {
   return {
     async login(userName: string, password: string) {
       return request<{ token: string; user: User }>('/login', {

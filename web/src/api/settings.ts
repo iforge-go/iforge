@@ -2,7 +2,7 @@ import type { PublicGeneralSettings } from '../lib/types'
 
 type RequestFn = <T>(endpoint: string, options?: { method?: string; body?: any; token?: string | null }) => Promise<T>
 
-export function createSettingsApi(request: RequestFn, baseUrl: string) {
+export function createSettingsApi(request: RequestFn, _baseUrl: string) {
   return {
     // Public general settings (no auth required) — siteName / description / timezone / allowRegistration
     async getPublicGeneralSettings() {

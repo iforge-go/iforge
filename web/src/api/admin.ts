@@ -1,11 +1,11 @@
 import type {
-  SSHKey, GeneralSettings, PublicGeneralSettings, SMTPSettings, LDAPSettings,
+  SSHKey, GeneralSettings, SMTPSettings, LDAPSettings,
   Release, ReleaseAsset, AccountPreference, ExtraMailAddress, WikiPage,
   AccessToken, DeployKey, GPGKey, Contributor,
   WebhookSettings, UploadSettings, RepositorySettings, OIDCSettings, AISettings,
   AIModelConfig, AIModelConfigInput,
   SystemInfo, Organization, OrganizationMember, Repository, User, Issue, LFSObject, Participant,
-  AuditLog, AuditLogListResponse
+  AuditLogListResponse
 } from '../lib/types'
 
 type RequestFn = <T>(endpoint: string, options?: { method?: string; body?: any; token?: string | null }) => Promise<T>

@@ -2,7 +2,7 @@ import type { Webhook, WebhookDelivery, TableInfo, ColumnInfo, QueryResult } fro
 
 type RequestFn = <T>(endpoint: string, options?: { method?: string; body?: any; token?: string | null }) => Promise<T>
 
-export function createMiscApi(request: RequestFn, baseUrl: string) {
+export function createMiscApi(request: RequestFn, _baseUrl: string) {
   return {
     // Database Viewer
     async listDbTables() {

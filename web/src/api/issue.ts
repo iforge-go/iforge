@@ -2,7 +2,7 @@ import type { User, Issue, IssueTemplate, Comment, Participant, MergeRequest, Re
 
 type RequestFn = <T>(endpoint: string, options?: { method?: string; body?: any; token?: string | null }) => Promise<T>
 
-export function createIssueApi(request: RequestFn, baseUrl: string) {
+export function createIssueApi(request: RequestFn, _baseUrl: string) {
   return {
     async listIssues(owner: string, repo: string) {
       return request<{ issues: Issue[]; participants: Participant[] }>(`/repos/${owner}/${repo}/issues`)
