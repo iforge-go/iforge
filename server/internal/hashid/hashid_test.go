@@ -1,4 +1,4 @@
-﻿package hashid
+package hashid
 
 import (
 	"strings"
