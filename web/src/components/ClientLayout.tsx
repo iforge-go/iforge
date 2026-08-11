@@ -4,7 +4,6 @@ import { Box } from '@chakra-ui/react'
 import { usePathname } from 'next/navigation'
 import { Header } from './Header'
 import { Footer } from './Footer'
-import { DemoBanner } from './DemoBanner'
 import { useSiteSettings } from '@/contexts/SiteSettingsContext'
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -22,7 +21,6 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         {children}
       </Box>
       <Footer />
-      <DemoBanner />
     </Box>
   )
 }
