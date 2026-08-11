@@ -2,20 +2,30 @@ package service
 
 import (
 	"fmt"
+	"sync/atomic"
 
 	"iforge/iforge/internal/model"
 
 	"gorm.io/gorm"
 )
 
-// SystemSettingsService handles system settings operations
+// SystemSettingsService handles system settings operations.
+// Settings are cached in memory (atomic.Pointer) because they rarely change
+// and are read on nearly every request (e.g. /settings/general).
+// Cache is invalidated on any write (SetSetting/DeleteSetting).
 type SystemSettingsService struct {
-	db *gorm.DB
+	db    *gorm.DB
+	cache atomic.Pointer[map[string]string]
 }
 
 // NewSystemSettingsService creates a new SystemSettingsService
 func NewSystemSettingsService(db *gorm.DB) *SystemSettingsService {
 	return &SystemSettingsService{db: db}
+}
+
+// invalidateCache clears the in-memory cache. Called after any write operation.
+func (s *SystemSettingsService) invalidateCache() {
+	s.cache.Store(nil)
 }
 
 // GetSetting gets a system setting by key
@@ -45,10 +55,15 @@ func (s *SystemSettingsService) SetSetting(key, value string) error {
 		if err != nil {
 			// If duplicate key error (race condition), try update instead
 			if isDuplicateKeyError(err) {
-				return s.db.Model(&model.SystemSetting{}).Where("`key` = ?", key).Update("value", value).Error
+				if e := s.db.Model(&model.SystemSetting{}).Where("`key` = ?", key).Update("value", value).Error; e != nil {
+					return e
+				}
+				s.invalidateCache()
+				return nil
 			}
 			return err
 		}
+		s.invalidateCache()
 		return nil
 	}
 
@@ -57,11 +72,20 @@ func (s *SystemSettingsService) SetSetting(key, value string) error {
 	}
 
 	// Record exists, update it
-	return s.db.Model(&setting).Update("value", value).Error
+	if err := s.db.Model(&setting).Update("value", value).Error; err != nil {
+		return err
+	}
+	s.invalidateCache()
+	return nil
 }
 
-// GetAllSettings gets all system settings
+// GetAllSettings gets all system settings, served from in-memory cache when available.
+// Cache is populated on first access and invalidated on any write.
 func (s *SystemSettingsService) GetAllSettings() (map[string]string, error) {
+	if cached := s.cache.Load(); cached != nil {
+		return *cached, nil
+	}
+
 	var settingsList []model.SystemSetting
 	if err := s.db.Find(&settingsList).Error; err != nil {
 		return nil, err
@@ -72,12 +96,17 @@ func (s *SystemSettingsService) GetAllSettings() (map[string]string, error) {
 		settings[setting.Key] = setting.Value
 	}
 
+	s.cache.Store(&settings)
 	return settings, nil
 }
 
 // DeleteSetting deletes a system setting
 func (s *SystemSettingsService) DeleteSetting(key string) error {
-	return s.db.Where("`key` = ?", key).Delete(&model.SystemSetting{}).Error
+	if err := s.db.Where("`key` = ?", key).Delete(&model.SystemSetting{}).Error; err != nil {
+		return err
+	}
+	s.invalidateCache()
+	return nil
 }
 
 // SMTP settings
