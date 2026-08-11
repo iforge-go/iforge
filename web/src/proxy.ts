@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
 
   try {
     const response = await fetch(`${API_BASE}/setup/status`, {
-      cache: 'no-store',
+      next: { revalidate: 60 },
     })
     const data = await response.json()
 

@@ -47,7 +47,7 @@ async function fetchProjectName(slug: string, reqHeaders: Record<string, string>
   try {
     const res = await fetch(`${API_BASE}/projects/${slug}`, {
       headers: reqHeaders,
-      cache: 'no-store',
+      next: { revalidate: 30 },
     })
     if (res.ok) {
       const data = await res.json()
@@ -64,7 +64,7 @@ async function fetchSprintTitle(sprintSlug: string, reqHeaders: Record<string, s
   try {
     const res = await fetch(`${API_BASE}/sprints/${sprintSlug}`, {
       headers: reqHeaders,
-      cache: 'no-store',
+      next: { revalidate: 30 },
     })
     if (res.ok) {
       const data = await res.json()
@@ -81,7 +81,7 @@ async function fetchUserStoryTitle(storySlug: string, reqHeaders: Record<string,
   try {
     const res = await fetch(`${API_BASE}/user-stories/${storySlug}`, {
       headers: reqHeaders,
-      cache: 'no-store',
+      next: { revalidate: 30 },
     })
     if (res.ok) {
       const data = await res.json()
@@ -99,7 +99,7 @@ async function fetchTaskTitle(projectSlug: string, taskId: string, reqHeaders: R
   try {
     const res = await fetch(`${API_BASE}/projects/${projectSlug}/tasks/${taskId}`, {
       headers: reqHeaders,
-      cache: 'no-store',
+      next: { revalidate: 30 },
     })
     if (res.ok) {
       const data = await res.json()
