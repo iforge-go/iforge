@@ -55,7 +55,7 @@ export default function GpgKeysTab({ isActive }: GpgKeysTabProps) {
         toast({ title: t('settings.loadGpgKeysFailed'), description: err.message, status: 'error', duration: 3000 })
       })
       .finally(() => setGpgKeyLoading(false))
-  }, [isActive])
+  }, [isActive, t, toast])
 
   const handleAddGPGKey = async () => {
     if (!newGpgTitle.trim() || !newGpgKey.trim()) {

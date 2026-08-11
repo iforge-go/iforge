@@ -35,9 +35,10 @@ import {
   MenuItem,
 } from '@chakra-ui/react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
-import { api, API_BASE, FileEntry, CommitInfo } from '@/lib/api'
+import { api, FileEntry, CommitInfo } from '@/lib/api'
 import { parseBranchAndPath, shouldWaitForBranches } from '@/lib/branchPath'
 import { FiFolder, FiFile, FiChevronRight, FiGitBranch, FiSearch, FiPlus, FiUpload, FiList } from 'react-icons/fi'
 import ReactMarkdown from 'react-markdown'
@@ -64,7 +65,7 @@ export default function TreePage() {
   const owner = params.owner as string
   const repoName = params.repo as string
   const pathSegments = params.path as string[]
-  const { repo, branches, refreshData } = useRepo()
+  const { branches, refreshData } = useRepo()
   const toast = useGithubToast()
   const { t } = useI18n()
   
@@ -124,7 +125,7 @@ export default function TreePage() {
     }
 
     loadData()
-  }, [owner, repoName, dirPath, ref, branchesLoaded, pathSegments.length])
+  }, [owner, repoName, dirPath, ref, branchesLoaded, pathSegments.length, branches, pathSegments])
 
   const handleBranchChange = (branchName: string) => {
     const newPath = dirPath 
@@ -253,11 +254,6 @@ export default function TreePage() {
       href: `/${owner}/${repoName}/tree/${ref}/${pathParts.slice(0, index + 1).join('/')}`,
     })),
   ]
-
-  const sortedFiles = [...files].sort((a, b) => {
-    if (a.type === b.type) return a.name.localeCompare(b.name)
-    return a.type === 'dir' ? -1 : 1
-  })
 
   return (
     <VStack spacing={4} align="stretch">
@@ -544,12 +540,12 @@ export default function TreePage() {
                     img: ({ src, alt }) => {
                       if (!src) return null
                       if (typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'))) {
-                        return <img src={src} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+                        return <Image src={src} alt={alt || ''} width={800} height={600} style={{ maxWidth: '100%', height: 'auto' }} unoptimized />
                       }
                       const srcStr = typeof src === 'string' ? src : ''
                       const fullPath = dirPath ? `${dirPath}/${srcStr}` : srcStr
                       const rawUrl = `/${owner}/${repoName}/raw/${ref}/${fullPath}`
-                      return <img src={rawUrl} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+                      return <Image src={rawUrl} alt={alt || ''} width={800} height={600} style={{ maxWidth: '100%', height: 'auto' }} unoptimized />
                     }
                   }}
                 >

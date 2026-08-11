@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
 import { Box, Text } from '@chakra-ui/react'
+import Image from 'next/image'
 import { highlightMentionsInChildren } from './MentionTextarea'
 import { preprocessMarkdown } from '@/lib/markdown'
 
@@ -109,12 +110,12 @@ export function MarkdownRendererInternal({ content, imageBaseUrl }: MarkdownRend
             if (!src) return null
             // 绝对 URL 直接使用
             if (typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'))) {
-              return <img src={src} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+              return <Image src={src} alt={alt || ''} width={800} height={600} style={{ maxWidth: '100%', height: 'auto' }} unoptimized />
             }
             // 相对路径：如果有 imageBaseUrl，则拼接
             const srcStr = typeof src === 'string' ? src : ''
             const finalSrc = imageBaseUrl ? `${imageBaseUrl}/${srcStr}` : srcStr
-            return <img src={finalSrc} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+            return <Image src={finalSrc} alt={alt || ''} width={800} height={600} style={{ maxWidth: '100%', height: 'auto' }} unoptimized />
           }
         }}
       >

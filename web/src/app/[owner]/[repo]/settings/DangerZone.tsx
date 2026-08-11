@@ -16,7 +16,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogContent,
-  AlertDialogOverlay,
 } from '@chakra-ui/react'
 import { useState, useRef } from 'react'
 import { api } from '@/lib/api'

@@ -1,8 +1,8 @@
 'use client'
 
-import { Avatar, Button, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
+import { Avatar, HStack, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react'
 import { useRouter, usePathname } from 'next/navigation'
-import { FiUser, FiSettings, FiShield, FiServer, FiEdit2, FiLogOut, FiBook, FiStar, FiFolder, FiCheckSquare } from 'react-icons/fi'
+import { FiUser, FiSettings, FiEdit2, FiLogOut, FiBook, FiStar, FiFolder, FiCheckSquare } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'
 

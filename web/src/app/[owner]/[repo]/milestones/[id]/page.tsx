@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react'
 import { FiCalendar, FiEdit2, FiTrash2, FiCheckCircle, FiXCircle } from 'react-icons/fi'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, Milestone } from '@/lib/api'
 import { useGithubToast } from '@/app/providers'
 import { useI18n } from '@/contexts/I18nContext'
@@ -49,7 +49,7 @@ export default function MilestoneDetailPage() {
   // Developer 及以上权限可以管理里程碑
   const canManageMilestone = userRole === 'owner' || userRole === 'member'
 
-  const loadMilestone = async () => {
+  const loadMilestone = useCallback(async () => {
     try {
       setLoading(true)
       const data = await api.getMilestone(owner, repo, milestoneId)
@@ -68,11 +68,11 @@ export default function MilestoneDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repo, milestoneId, toast, t])
 
   useEffect(() => {
     loadMilestone()
-  }, [owner, repo, milestoneId])
+  }, [loadMilestone])
 
   const handleSave = async () => {
     if (!title.trim()) {

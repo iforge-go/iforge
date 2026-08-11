@@ -45,9 +45,9 @@ export default function AccountTab({ user, isActive }: AccountTabProps) {
 
   // Extra Emails state
   const [extraEmails, setExtraEmails] = useState<ExtraMailAddress[]>([])
-  const [emailLoading, setEmailLoading] = useState(false)
   const [newEmail, setNewEmail] = useState('')
   const [deletingEmail, setDeletingEmail] = useState<string | null>(null)
+  const [, setEmailLoading] = useState(false)
 
   // Extra Emails: load when the account tab is active
   useEffect(() => {
@@ -59,7 +59,7 @@ export default function AccountTab({ user, isActive }: AccountTabProps) {
         toast({ title: t('settings.addEmailFailed'), description: getLocalizedErrorMessage(err, t), status: 'error', duration: 3000 })
       })
       .finally(() => setEmailLoading(false))
-  }, [isActive])
+  }, [isActive, t, toast])
 
   const handlePasswordChange = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {

@@ -23,7 +23,6 @@ import {
   Flex,
   Box,
   Stack,
-  Link,
 } from '@chakra-ui/react'
 import { FiRefreshCw, FiCheck, FiTrash2 } from 'react-icons/fi'
 import { api, AITaskSuggestion } from '@/lib/api'
@@ -177,7 +176,7 @@ export default function AIDecomposeModal({
           userStorySlug: storySlug,
         })
         created.push(task)
-      } catch (e) {
+      } catch {
         failed++
       }
     }

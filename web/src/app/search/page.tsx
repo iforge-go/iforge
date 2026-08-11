@@ -18,29 +18,13 @@ import {
   Card,
   CardBody,
   Badge,
-  Code,
-  Link as ChakraLink,
   Icon,
-  SimpleGrid,
-  Divider,
 } from '@chakra-ui/react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { api, Issue } from '@/lib/api'
-import { FiSearch, FiGitCommit, FiFileText, FiAlertCircle } from 'react-icons/fi'
+import { FiSearch, FiAlertCircle } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
-
-interface CodeSearchResult {
-  path: string
-  fileName: string
-  ref: string
-  matches: Array<{
-    lineNumber: number
-    line: string
-    before?: string
-    after?: string
-  }>
-}
 
 export default function SearchPage() {
   const router = useRouter()
@@ -49,7 +33,6 @@ export default function SearchPage() {
 
   const [query, setQuery] = useState('')
   const [issues, setIssues] = useState<Issue[]>([])
-  const [codeResults, setCodeResults] = useState<CodeSearchResult[]>([])
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
 

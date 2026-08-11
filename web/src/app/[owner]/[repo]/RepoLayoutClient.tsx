@@ -3,43 +3,35 @@
 import {
   Box,
   Container,
-  Heading,
   Text,
   Button,
   VStack,
   HStack,
   Badge,
   Icon,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Link,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
-  Spinner,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { useEffect, useState } from 'react'
-import { useParams, useRouter, usePathname } from 'next/navigation'
+import { useEffect, useState, useCallback } from 'react'
+import { useParams, usePathname } from 'next/navigation'
 import { api } from '@/lib/api'
 import { useGithubToast } from '@/app/providers'
 import { useI18n } from '@/contexts/I18nContext'
-import { RepoContext, useRepo } from './RepoContext'
+import { RepoContext } from './RepoContext'
 import type { Repository, Branch, Issue, MergeRequest } from '@/lib/types'
 import {
   FiBook,
   FiStar,
   FiGitBranch,
   FiEye,
-  FiChevronRight,
   FiMessageSquare,
   FiGitPullRequest,
   FiSettings,
   FiCode,
-  FiLayout,
-  FiBookOpen,
   FiUsers,
   FiActivity,
   FiBarChart2,
@@ -50,7 +42,6 @@ import {
 
 export default function RepoLayout({ children }: { children: React.ReactNode }) {
   const params = useParams()
-  const router = useRouter()
   const pathname = usePathname()
   const toast = useGithubToast()
   const { t } = useI18n()
@@ -70,7 +61,7 @@ export default function RepoLayout({ children }: { children: React.ReactNode }) 
   const [canCreateIssue, setCanCreateIssue] = useState(false)
   const [forking, setForking] = useState(false)
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [repoData, branchesData, issuesResp, mrsResp, starredData, watchingData, stargazersData, forkCountData, roleData] = await Promise.all([
         api.getRepo(owner, repoName).catch(() => null),
@@ -102,11 +93,11 @@ export default function RepoLayout({ children }: { children: React.ReactNode }) 
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadData()
-  }, [owner, repoName])
+  }, [owner, repoName, loadData])
 
   const handleStar = async () => {
     try {

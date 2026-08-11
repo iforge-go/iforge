@@ -13,7 +13,6 @@ import {
   Button,
   Icon,
   Badge,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -22,12 +21,11 @@ import {
   ModalFooter,
   ModalCloseButton,
   Spinner,
-  SimpleGrid,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, Priority } from '@/lib/api'
-import { FiPlus, FiEdit2, FiTrash2, FiCheck, FiStar } from 'react-icons/fi'
+import { FiPlus, FiEdit2, FiTrash2, FiStar } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
 
 interface PriorityManagerProps {
@@ -59,7 +57,7 @@ export default function PriorityManager({ owner, repoName }: PriorityManagerProp
     color: PRESET_COLORS[0],
   })
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const [list, def] = await Promise.all([
@@ -73,11 +71,11 @@ export default function PriorityManager({ owner, repoName }: PriorityManagerProp
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadData()
-  }, [owner, repoName])
+  }, [loadData])
 
   const resetForm = () => {
     setForm({ priorityName: '', description: '', color: PRESET_COLORS[0] })

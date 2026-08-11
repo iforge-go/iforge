@@ -2,7 +2,7 @@ version: 2
 updates:
   # Go 模块依赖更新
   - package-ecosystem: "gomod"
-    directory: "/api"
+    directory: "/server"
     schedule:
       interval: "weekly"
       day: "monday"

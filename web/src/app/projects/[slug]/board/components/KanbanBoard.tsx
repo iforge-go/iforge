@@ -153,7 +153,7 @@ export default function KanbanBoard({
   const toast = useToast()
 
   // DnD state
-  const [activeId, setActiveId] = useState<number | null>(null)
+  const [, setActiveId] = useState<number | null>(null)
   const [overStatus, setOverStatus] = useState<string | null>(null)
   const activeTaskRef = useRef<TaskItem | null>(null)
   const originalStatusRef = useRef<string | null>(null)
@@ -166,11 +166,8 @@ export default function KanbanBoard({
   const [swimlane, setSwimlane] = useState<SwimlaneDimension>('none')
 
   // viewer 禁用拖拽（对齐后端 UpdateTask 要求 member+）
-  const sensors = useSensors(
-    ...(canEditScrum
-      ? [useSensor(PointerSensor, { activationConstraint: { distance: 8 } })]
-      : [])
-  )
+  const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  const sensors = useSensors(...(canEditScrum ? [pointerSensor] : []))
 
   // --- Drag handlers ---
   function handleDragStart(event: DragStartEvent) {
@@ -351,20 +348,20 @@ export default function KanbanBoard({
     return translated === key ? slug : translated
   }
 
-  // 优先级显示配置(与 Backlog 优先级分组一致)
-  const PRIORITY_DISPLAY: Record<string, { label: string; color: string; order: number }> = {
-    urgent: { label: t('pms.urgent'), color: '#ef4444', order: 0 },
-    high: { label: t('pms.high'), color: '#f97316', order: 1 },
-    medium: { label: t('pms.medium'), color: '#eab308', order: 2 },
-    low: { label: t('pms.low'), color: '#22c55e', order: 3 },
-  }
-
   // 按 swimlane 维度分组任务(参考 Jira Swimlane:每组一行,组内按状态分列)
   // "未分配"组(Epic 无关联/经办人未指派/优先级缺失)放最后
   const swimlaneGroups = useMemo((): SwimlaneGroup[] => {
     if (swimlane === 'none') return []
     const groups = new Map<string, SwimlaneGroup>()
     const unassignedKey = '__unassigned__'
+
+    // 优先级显示配置(与 Backlog 优先级分组一致)
+    const PRIORITY_DISPLAY: Record<string, { label: string; color: string; order: number }> = {
+      urgent: { label: t('pms.urgent'), color: '#ef4444', order: 0 },
+      high: { label: t('pms.high'), color: '#f97316', order: 1 },
+      medium: { label: t('pms.medium'), color: '#eab308', order: 2 },
+      low: { label: t('pms.low'), color: '#22c55e', order: 3 },
+    }
 
     for (const task of tasks) {
       let key: string

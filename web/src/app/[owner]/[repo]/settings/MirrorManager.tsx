@@ -19,18 +19,10 @@ import {
   Button,
   Icon,
   Badge,
-  useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
   Spinner,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, RepositoryMirror } from '@/lib/api'
 import { FiRefreshCw, FiTrash2, FiSave, FiPlus } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
@@ -63,7 +55,7 @@ export default function MirrorManager({ owner, repoName }: MirrorManagerProps) {
     sshKey: '',
   })
 
-  const loadMirror = async () => {
+  const loadMirror = useCallback(async () => {
     setLoading(true)
     try {
       const data = await api.getMirror(owner, repoName)
@@ -90,11 +82,11 @@ export default function MirrorManager({ owner, repoName }: MirrorManagerProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadMirror()
-  }, [owner, repoName])
+  }, [loadMirror])
 
   const handleSave = async () => {
     if (!form.mirrorUrl.trim()) {

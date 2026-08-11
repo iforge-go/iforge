@@ -72,7 +72,7 @@ function getActivityIcon(type: string) {
 }
 
 function renderActivityMessage(activity: Activity, t: (key: string, params?: Record<string, string | number>) => string) {
-  const { message, activityType, userName, repositoryName, activityUserName } = activity
+  const { message, activityType, activityUserName } = activity
 
   const keyMap: Record<string, string> = {
     push: 'home.activityPush',

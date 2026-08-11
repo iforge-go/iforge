@@ -8,12 +8,11 @@ import {
   Button,
   VStack,
   HStack,
-  Icon,
   Badge,
   Divider,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api, WikiPage } from '@/lib/api'
 import { FiEdit, FiTrash2, FiArrowLeft } from 'react-icons/fi'
@@ -37,7 +36,7 @@ export default function WikiDetailPage() {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
 
-  const loadPage = async () => {
+  const loadPage = useCallback(async () => {
     try {
       const data = await api.getWikiPage(owner, repoName, pageName)
       setPage(data)
@@ -51,11 +50,11 @@ export default function WikiDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName, pageName, toast, t])
 
   useEffect(() => {
     loadPage()
-  }, [owner, repoName, pageName])
+  }, [loadPage])
 
   const handleDelete = () => {
     setConfirmAction(() => async () => {
@@ -67,7 +66,7 @@ export default function WikiDetailPage() {
           duration: 2000,
         })
         router.push(`/${owner}/${repoName}/wiki`)
-      } catch (error) {
+      } catch {
         toast({
           title: t('wiki.deleteFailed'),
           status: 'error',

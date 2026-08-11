@@ -14,7 +14,7 @@ export function HeaderSearch() {
 
   const isScrumMode = pathname.startsWith('/pms') || pathname.startsWith('/projects')
 
-  const handleSearchSubmit = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchSubmit = (_e: React.KeyboardEvent<HTMLInputElement>) => {
     const q = searchInput.trim()
     if (!q) return
     const target = isScrumMode ? `/pms?q=${encodeURIComponent(q)}` : `/repos?q=${encodeURIComponent(q)}`

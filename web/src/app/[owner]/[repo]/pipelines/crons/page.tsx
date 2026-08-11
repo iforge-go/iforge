@@ -33,8 +33,6 @@ import {
   Th,
   Td,
   useDisclosure,
-  Alert,
-  AlertIcon,
   Tooltip,
 } from '@chakra-ui/react'
 import Link from 'next/link'
@@ -48,7 +46,6 @@ import {
   FiRefreshCw,
   FiCalendar,
   FiGitBranch,
-  FiPlay,
   FiGitCommit,
 } from 'react-icons/fi'
 import { api, CronSchedule } from '@/lib/api'

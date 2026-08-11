@@ -44,7 +44,6 @@ import {
 import {
   arrayMove,
   SortableContext,
-  sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
@@ -143,7 +142,7 @@ export default function StatusesPage() {
   const canEdit = canManageProject
   const sorted = [...statuses].sort((a, b) => a.position - b.position)
 
-  const handleDragStart = (event: DragStartEvent) => {}
+  const handleDragStart = (_event: DragStartEvent) => {}
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event

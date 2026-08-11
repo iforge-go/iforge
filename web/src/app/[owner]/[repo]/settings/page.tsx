@@ -18,7 +18,7 @@ import {
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { api, Branch, User } from '@/lib/api'
+import { api, Branch } from '@/lib/api'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'

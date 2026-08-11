@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
-import { Suspense, useState, useEffect, useRef } from 'react'
+import { Suspense, useState, useEffect, useRef, useCallback } from 'react'
 import { api } from '@/lib/api'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import { useI18n } from '@/contexts/I18nContext'
@@ -90,7 +90,7 @@ function NewMergeRequestContent() {
     loadBranches()
   }, [headRepoOwner, headRepoName, owner, repoName, branches])
 
-  const fetchCompare = async (headBranch: string, baseBranch: string) => {
+  const fetchCompare = useCallback(async (headBranch: string, baseBranch: string) => {
     if (!headBranch || !baseBranch) {
       setCompareResult(null)
       return
@@ -140,7 +140,7 @@ function NewMergeRequestContent() {
     } finally {
       setLoadingCompare(false)
     }
-  }
+  }, [owner, repoName, headRepoOwner, headRepoName])
 
   useEffect(() => {
     const headParam = searchParams.get('head')
@@ -167,7 +167,7 @@ function NewMergeRequestContent() {
     if (head && base) {
       fetchCompare(head, base)
     }
-  }, [head, base, headRepoOwner, headRepoName])
+  }, [head, base, headRepoOwner, headRepoName, fetchCompare])
 
   const handleSubmit = async () => {
     if (!title.trim() || !head || !base) return

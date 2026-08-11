@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useState, useEffect, useMemo } from 'react'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import {
   Box,
@@ -13,8 +13,6 @@ import {
   Spinner,
   Stack,
   Text,
-  VStack,
-  useToast,
 } from '@chakra-ui/react'
 import { FiRepeat, FiPlus } from 'react-icons/fi'
 import { api } from '@/lib/api'
@@ -53,11 +51,9 @@ interface TaskItem {
 // 活跃 Sprint 看板（对齐 Jira Board：显示活跃 Sprint 的任务）
 // 多个活跃 Sprint 时支持"全部活跃 Sprint"聚合视图，合并展示所有任务并用 Badge 标注归属
 export default function BoardPage() {
-  const router = useRouter()
   const params = useParams()
   const projectSlug = params.slug as string
   const { t } = useI18n()
-  const toast = useToast()
   const { user, authLoading } = useCurrentUser()
   const { canEditScrum } = useProject()
 

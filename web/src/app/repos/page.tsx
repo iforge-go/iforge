@@ -24,7 +24,7 @@ import Link from 'next/link'
 import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { api, Repository } from '@/lib/api'
-import { FiSearch, FiBook, FiStar, FiGitBranch, FiChevronDown, FiX } from 'react-icons/fi'
+import { FiSearch, FiBook, FiChevronDown, FiX } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
 
 function ReposContent() {

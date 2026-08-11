@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Container, Heading, HStack, Text } from '@chakra-ui/react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AdminSidebar from './components/AdminSidebar'
 import type { AdminPage } from './components/AdminSidebar'
 import AdminOverview from './components/AdminOverview'
@@ -21,7 +21,6 @@ import RepositorySettings from './components/settings/RepositorySettings'
 import OIDCSettings from './components/settings/OIDCSettings'
 import AISettings from './components/settings/AISettings'
 import { api, SystemInfo } from '@/lib/api'
-import { useEffect, useState as useReactState } from 'react'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'
 

@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Container,
   Text,
   VStack,
   HStack,
@@ -12,7 +11,6 @@ import {
   BreadcrumbLink,
   Spinner,
   Button,
-  Textarea,
   Input,
   useDisclosure,
   Modal,
@@ -88,7 +86,7 @@ export default function EditPage() {
     if (filePath) {
       loadFile()
     }
-  }, [owner, repoName, filePath, ref, branchesLoaded])
+  }, [owner, repoName, filePath, ref, branchesLoaded, branches, pathSegments])
 
   const handleSave = async () => {
     if (!commitMessage.trim()) {

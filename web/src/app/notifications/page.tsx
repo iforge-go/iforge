@@ -65,8 +65,7 @@ const TYPE_LABEL_KEY: Record<string, string> = {
 export default function NotificationsPage() {
   const router = useRouter()
   const toast = useGithubToast()
-  const { t, locale } = useI18n()
-  const dateLocale = locale === 'zh' ? 'zh-CN' : 'en-US'
+  const { t } = useI18n()
 
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [participants, setParticipants] = useState<Participant[]>([])
@@ -89,7 +88,7 @@ export default function NotificationsPage() {
     } finally {
       setLoading(false)
     }
-  }, [activeTab])
+  }, [activeTab, t, toast])
 
   useEffect(() => {
     setLoading(true)

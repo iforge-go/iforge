@@ -10,7 +10,6 @@ import {
   Button,
   Icon,
   Avatar,
-  AvatarGroup,
   Badge,
   Modal,
   ModalOverlay,
@@ -25,7 +24,6 @@ import {
   Input,
   Textarea,
   Switch,
-  Divider,
 } from '@chakra-ui/react'
 import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -84,7 +82,7 @@ function OrganizationsContent() {
       // 清除 URL 参数
       router.replace('/organizations', { scroll: false })
     }
-  }, [searchParams])
+  }, [searchParams, onOpen, router])
 
   const loadOrganizations = async () => {
     try {

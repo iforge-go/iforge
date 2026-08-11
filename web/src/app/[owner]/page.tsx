@@ -371,7 +371,6 @@ function OwnerPageContent() {
 
 // 主页面组件，用 Suspense 包裹
 export default function OwnerPage() {
-  const { t } = useI18n()
   return (
     <Suspense fallback={
       <Box bg="myGray.50">

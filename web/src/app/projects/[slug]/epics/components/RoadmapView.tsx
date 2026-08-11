@@ -63,11 +63,6 @@ function formatAxisLabel(date: Date, scale: Scale): string {
   return `${y}-${m}`
 }
 
-// 计算两个日期间的天数差(用于 tooltip 显示时长)
-function daysBetween(start: Date, end: Date): number {
-  return Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
-}
-
 // 状态颜色映射(与 EpicsTab 保持一致)
 const STATUS_COLOR: Record<string, string> = {
   open: 'gray.400',

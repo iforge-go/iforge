@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { useGithubToast } from '@/app/providers'
 import { useI18n } from '@/contexts/I18nContext'
-import { getLocalizedErrorMessage, isApiError, ApiError } from '@/lib/errorMessages'
+import { getLocalizedErrorMessage, isApiError } from '@/lib/errorMessages'
+// ApiError type removed - not directly used in this file
 
 /**
  * 统一的 API 错误处理 hook

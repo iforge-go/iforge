@@ -51,16 +51,6 @@ const getPriorityLabelKey = (priority: string): string => {
   }
 }
 
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case 'urgent': return 'red'
-    case 'high': return 'orange'
-    case 'medium': return 'yellow'
-    case 'low': return 'green'
-    default: return 'gray'
-  }
-}
-
 // 将 task status slug 翻译为本地化名称（与 BacklogTab/tasks 页面的 getStatusName 逻辑一致）
 const getTaskStatusName = (t: (k: string) => string, slug: string): string => {
   const camelSlug = slug.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')
@@ -81,7 +71,7 @@ export default function UserStoryDetailPage() {
   const [story, setStory] = useState<any>(null)
   const [storyLoading, setStoryLoading] = useState(true)
   const [tasks, setTasks] = useState<any[]>([])
-  const [userStories, setUserStories] = useState<any[]>([])
+  const [, setUserStories] = useState<any[]>([])
   // 用户故事编辑 Drawer：复用共享 UserStoryDrawer 组件
   const [isStoryDrawerOpen, setIsStoryDrawerOpen] = useState(false)
 

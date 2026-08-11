@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Container,
   Heading,
   Text,
   Button,
@@ -25,7 +24,7 @@ import {
   useDisclosure,
   Spinner,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { api, Tag } from '@/lib/api'
 import { FiTag, FiPlus, FiTrash2 } from 'react-icons/fi'
@@ -53,16 +52,16 @@ export default function TagsPage() {
   const [deleting, setDeleting] = useState(false)
   const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure()
 
-  const loadTags = () => {
+  const loadTags = useCallback(() => {
     setLoading(true)
     api.listTags(owner, repoName)
       .then(data => setTags(data || []))
       .finally(() => setLoading(false))
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadTags()
-  }, [owner, repoName])
+  }, [loadTags])
 
   const handleCreateTag = async () => {
     if (!tagName.trim()) {

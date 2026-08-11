@@ -10,7 +10,6 @@ import {
   BreadcrumbItem,
   BreadcrumbLink,
   Button,
-  Textarea,
   Input,
   Modal,
   ModalOverlay,
@@ -37,9 +36,17 @@ export default function NewFilePage() {
   const repoName = params.repo as string
   const pathSegments = params.path as string[]
 
-  const { branches, userRole, refreshData } = useRepo()
+  const { branches, refreshData } = useRepo()
   const toast = useGithubToast()
   const { t } = useI18n()
+
+  // All hooks must be called before any conditional returns
+  const [fileName, setFileName] = useState('')
+  const [content, setContent] = useState('')
+  const [commitMessage, setCommitMessage] = useState('')
+  const [saving, setSaving] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
 
   const defaultBranch = branches.find(b => b.isDefault)?.name || branches[0]?.name || 'main'
   const { ref, subPath: dirPath } = parseBranchAndPath(pathSegments, branches, defaultBranch)
@@ -56,18 +63,7 @@ export default function NewFilePage() {
     )
   }
 
-  const [fileName, setFileName] = useState('')
-  const [content, setContent] = useState('')
-  const [commitMessage, setCommitMessage] = useState('')
-  const [saving, setSaving] = useState(false)
-
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const [confirmOpen, setConfirmOpen] = useState(false)
-
   const fullPath = dirPath ? `${dirPath}/${fileName}` : fileName
-
-  // Developer 及以上权限可以创建文件
-  const canCreateFile = userRole === 'owner' || userRole === 'member'
 
   const handleSave = async () => {
     if (!fileName.trim()) {

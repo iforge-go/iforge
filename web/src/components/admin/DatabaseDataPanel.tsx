@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Spinner, Text, HStack, Button, Select } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api, QueryResult } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 
@@ -9,14 +9,14 @@ interface DatabaseDataPanelProps {
   tableName: string
   queryResult: QueryResult | null
   loading: boolean
-  onRefresh: () => void
+  onRefresh?: () => void
 }
 
 export default function DatabaseDataPanel({
   tableName,
   queryResult,
   loading,
-  onRefresh,
+  onRefresh: _onRefresh,
 }: DatabaseDataPanelProps) {
   const { t } = useI18n()
   const [page, setPage] = useState(0)
@@ -29,12 +29,7 @@ export default function DatabaseDataPanel({
     setPage(0)
   }, [queryResult, tableName])
 
-  useEffect(() => {
-    if (page === 0) return
-    loadData()
-  }, [page, pageSize])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoadingData(true)
       const offset = page * pageSize
@@ -45,7 +40,12 @@ export default function DatabaseDataPanel({
     } finally {
       setLoadingData(false)
     }
-  }
+  }, [page, pageSize, tableName])
+
+  useEffect(() => {
+    if (page === 0) return
+    loadData()
+  }, [page, loadData])
 
   const handlePageSizeChange = (newSize: number) => {
     setPageSize(newSize)

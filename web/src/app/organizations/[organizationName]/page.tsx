@@ -37,7 +37,7 @@ import {
   IconButton,
   Divider,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api, Organization, Repository, OrganizationMember } from '@/lib/api'
 import { useGithubToast } from '@/app/providers'
@@ -96,20 +96,7 @@ export default function OrganizationDetailPage() {
     role: 'member',
   })
 
-  useEffect(() => {
-    loadOrganizationData()
-  }, [organizationName])
-
-  useEffect(() => {
-    if (currentUser && members.length > 0) {
-      const isManager = members.some(
-        (m: any) => m.userName === currentUser.userName && m.isManager
-      )
-      setIsOrganizationManager(isManager || currentUser.isAdmin)
-    }
-  }, [currentUser, members])
-
-  const loadOrganizationData = async () => {
+  const loadOrganizationData = useCallback(async () => {
     try {
       const organizationData = await api.getOrganization(organizationName)
       setOrganization(organizationData)
@@ -126,7 +113,7 @@ export default function OrganizationDetailPage() {
       ])
       setMembers(membersData || [])
       setRepos(reposData || [])
-    } catch (error) {
+    } catch {
       toast({
         title: t('organization.loadFailed'),
         status: 'error',
@@ -135,7 +122,20 @@ export default function OrganizationDetailPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [organizationName, t, toast])
+
+  useEffect(() => {
+    loadOrganizationData()
+  }, [loadOrganizationData])
+
+  useEffect(() => {
+    if (currentUser && members.length > 0) {
+      const isManager = members.some(
+        (m: any) => m.userName === currentUser.userName && m.isManager
+      )
+      setIsOrganizationManager(isManager || currentUser.isAdmin)
+    }
+  }, [currentUser, members])
 
   const handleUpdateOrganization = async () => {
     try {

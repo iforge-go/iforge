@@ -5,16 +5,13 @@ import {
   Container,
   Heading,
   Text,
-  Button,
   VStack,
-  HStack,
   SimpleGrid,
   Icon,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { api } from '@/lib/api'
 import { FiBook, FiRefreshCw, FiCheckSquare, FiSliders, FiPlay, FiCpu } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'

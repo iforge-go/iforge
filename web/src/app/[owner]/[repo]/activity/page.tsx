@@ -11,7 +11,7 @@ import {
   Spinner,
   Button,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { Activity } from '@/lib/types'
@@ -32,7 +32,7 @@ export default function RepoActivityPage() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [hasMore, setHasMore] = useState(false)
 
-  const loadActivities = async (offset: number, append: boolean) => {
+  const loadActivities = useCallback(async (offset: number, append: boolean) => {
     if (append) {
       setLoadingMore(true)
     }
@@ -47,11 +47,11 @@ export default function RepoActivityPage() {
       setLoading(false)
       setLoadingMore(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadActivities(0, false)
-  }, [owner, repoName])
+  }, [loadActivities])
 
   const handleLoadMore = () => {
     loadActivities(activities.length, true)

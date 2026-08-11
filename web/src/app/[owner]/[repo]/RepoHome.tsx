@@ -281,7 +281,7 @@ export default function RepoCodePage() {
               if (!forkAhead || forkAhead.ahead === 0) {
                 continue
               }
-            } catch (err) {
+            } catch {
               continue
             }
           }

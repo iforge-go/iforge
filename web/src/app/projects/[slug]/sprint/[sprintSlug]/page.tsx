@@ -77,7 +77,7 @@ export default function SprintDetailPage() {
 
   // 新建任务抽屉
   const [isNewTaskDrawerOpen, setIsNewTaskDrawerOpen] = useState(false)
-  const [allUserStories, setAllUserStories] = useState<any[]>([])
+  const [, setAllUserStories] = useState<any[]>([])
   const [taskStatuses, setTaskStatuses] = useState<any[]>([])
 
   // 任务查看抽屉（点击任务以抽屉模式显示详情）

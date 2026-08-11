@@ -91,7 +91,7 @@ export default function JobLogsPage() {
   useEffect(() => {
     loadJob()
     loadLogs()
-  }, [owner, repoName, jobId])
+  }, [owner, repoName, jobId, loadJob, loadLogs])
 
   // 轮询:当 job 还在 pending/running 时持续刷新
   useEffect(() => {
@@ -103,7 +103,7 @@ export default function JobLogsPage() {
       loadLogs()
     }, POLL_INTERVAL)
     return () => clearInterval(timer)
-  }, [job?.status, loadJob, loadLogs])
+  }, [job, loadJob, loadLogs])
 
   // 自动滚动到底部
   useEffect(() => {
@@ -118,6 +118,14 @@ export default function JobLogsPage() {
     const atBottom = scrollHeight - scrollTop - clientHeight < 50
     setAutoScroll(atBottom)
   }
+
+  const jobDuration = (() => {
+    if (!job?.startedAt) return null
+    if (job.finishedAt) {
+      return new Date(job.finishedAt).getTime() - new Date(job.startedAt).getTime()
+    }
+    return Date.now() - new Date(job.startedAt).getTime()
+  })()
 
   if (loading && !job) {
     return (
@@ -141,11 +149,6 @@ export default function JobLogsPage() {
   const StatusIcon = pipelineStatusIcon(job.status)
   const statusColor = pipelineStatusColor(job.status)
   const isActive = job.status === 'running' || job.status === 'pending'
-  const jobDuration = job.startedAt
-    ? (job.finishedAt
-        ? new Date(job.finishedAt).getTime() - new Date(job.startedAt).getTime()
-        : Date.now() - new Date(job.startedAt).getTime())
-    : null
 
   return (
     <VStack spacing={4} align="stretch">

@@ -14,7 +14,7 @@ import {
 import { FiPlus, FiCheckCircle, FiCircle, FiFlag } from 'react-icons/fi'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, Milestone } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
@@ -33,7 +33,7 @@ export default function MilestonesPage() {
   // Developer 及以上权限可以创建里程碑
   const canCreateMilestone = userRole === 'owner' || userRole === 'member'
 
-  const loadMilestones = async () => {
+  const loadMilestones = useCallback(async () => {
     try {
       setLoading(true)
       const data = await api.listMilestones(owner, repo)
@@ -44,11 +44,11 @@ export default function MilestonesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repo])
 
   useEffect(() => {
     loadMilestones()
-  }, [owner, repo])
+  }, [loadMilestones])
 
   const openMilestones = milestones.filter(m => !m.closedDate)
   const closedMilestones = milestones.filter(m => m.closedDate)

@@ -16,7 +16,6 @@ import {
 } from '@chakra-ui/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useMemo, Suspense } from 'react'
-import { api } from '@/lib/api'
 import { FiUser, FiKey, FiSliders, FiShield, FiLock, FiAward } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'

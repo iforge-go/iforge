@@ -9,7 +9,6 @@ import {
   FiPackage,
   FiChevronDown,
   FiChevronRight,
-  FiServer,
   FiMail,
   FiShield,
   FiGlobe,

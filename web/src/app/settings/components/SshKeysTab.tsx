@@ -53,7 +53,7 @@ export default function SshKeysTab({ isActive }: SshKeysTabProps) {
         toast({ title: t('settings.loadSSHKeysFailed'), description: err.message, status: 'error', duration: 3000 })
       })
       .finally(() => setSshKeyLoading(false))
-  }, [isActive])
+  }, [isActive, t, toast])
 
   const handleAddSSHKey = async () => {
     if (!newKeyTitle.trim() || !newKeyValue.trim()) {

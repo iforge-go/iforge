@@ -21,12 +21,6 @@ import {
   Input,
   Textarea,
   Switch,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   useDisclosure,
   Tooltip,
   Code,
@@ -34,7 +28,7 @@ import {
   Icon,
 } from '@chakra-ui/react'
 import { FiPlus, FiTrash2, FiKey } from 'react-icons/fi'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api, DeployKey } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useGithubToast } from '@/app/providers'
@@ -58,11 +52,7 @@ export default function DeployKeyManager({ owner, repoName }: DeployKeyManagerPr
   const [creating, setCreating] = useState(false)
   const [deletingId, setDeletingId] = useState<number | null>(null)
 
-  useEffect(() => {
-    loadDeployKeys()
-  }, [owner, repoName])
-
-  const loadDeployKeys = async () => {
+  const loadDeployKeys = useCallback(async () => {
     setLoading(true)
     try {
       const data = await api.listDeployKeys(owner, repoName)
@@ -77,7 +67,11 @@ export default function DeployKeyManager({ owner, repoName }: DeployKeyManagerPr
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName, toast, t])
+
+  useEffect(() => {
+    loadDeployKeys()
+  }, [loadDeployKeys])
 
   const handleCreate = async () => {
     if (!newTitle.trim() || !newPublicKey.trim()) {

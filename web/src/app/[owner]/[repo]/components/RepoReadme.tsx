@@ -2,15 +2,14 @@
 
 import {
   Box,
-  Text,
   HStack,
   Icon,
   IconButton,
   Heading,
 } from '@chakra-ui/react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useState } from 'react'
-import { API_BASE } from '@/lib/api'
 import {
   FiFile,
   FiEdit,
@@ -171,12 +170,12 @@ export function RepoReadme({
                 img: ({ src, alt }) => {
                   if (!src) return null
                   if (typeof src === 'string' && (src.startsWith('http://') || src.startsWith('https://'))) {
-                    return <img src={src} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+                    return <Image src={src} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} fill={false} />
                   }
                   const srcStr = typeof src === 'string' ? src : ''
                   // 使用 GitHub-style raw URL: /:owner/:repo/raw/:ref/*
                   const rawUrl = `/${owner}/${repoName}/raw/${selectedBranch}/${srcStr}`
-                  return <img src={rawUrl} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} />
+                  return <Image src={rawUrl} alt={alt || ''} style={{ maxWidth: '100%', height: 'auto' }} fill={false} />
                 }
               }}
             >

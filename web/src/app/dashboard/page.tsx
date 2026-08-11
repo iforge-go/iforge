@@ -14,8 +14,7 @@ import {
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { api } from '@/lib/api'
-import { FiUsers, FiPlus, FiSettings, FiShield } from 'react-icons/fi'
+import { FiPlus, FiSettings, FiShield } from 'react-icons/fi'
 import { AiOutlineBank } from 'react-icons/ai'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'
@@ -30,7 +29,7 @@ export default function DashboardPage() {
     if (!token) {
       router.push('/login')
     }
-  }, [])
+  }, [router])
 
   if (authLoading) return null
 

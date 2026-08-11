@@ -27,11 +27,10 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  Code,
   Spinner,
   Divider,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { api, Release, ReleaseAsset } from '@/lib/api'
 import { FiTag, FiPlus, FiEdit, FiTrash2, FiMoreVertical, FiDownload, FiPaperclip } from 'react-icons/fi'
@@ -82,7 +81,7 @@ export default function ReleasesPage() {
   const [deletingAsset, setDeletingAsset] = useState<{ tag: string; asset: ReleaseAsset } | null>(null)
   const { isOpen: isAssetDeleteOpen, onOpen: onAssetDeleteOpen, onClose: onAssetDeleteClose } = useDisclosure()
 
-  const loadReleases = async () => {
+  const loadReleases = useCallback(async () => {
     try {
       const data = await api.listReleases(owner, repoName)
       setReleases(data || [])
@@ -91,11 +90,11 @@ export default function ReleasesPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadReleases()
-  }, [owner, repoName])
+  }, [loadReleases])
 
   const handleCreate = async () => {
     if (!createData.tag || !createData.name) {
@@ -118,7 +117,7 @@ export default function ReleasesPage() {
       onCreateClose()
       setCreateData({ tag: '', name: '', content: '' })
       loadReleases()
-    } catch (error) {
+    } catch {
       toast({
         title: t('release.createFailed'),
         status: 'error',
@@ -158,7 +157,7 @@ export default function ReleasesPage() {
       })
       onEditClose()
       loadReleases()
-    } catch (error) {
+    } catch {
       toast({
         title: t('release.updateFailed'),
         status: 'error',
@@ -187,7 +186,7 @@ export default function ReleasesPage() {
       })
       onDeleteClose()
       loadReleases()
-    } catch (error) {
+    } catch {
       toast({
         title: t('release.deleteFailed'),
         status: 'error',
@@ -199,20 +198,20 @@ export default function ReleasesPage() {
   }
 
   // Assets
-  const loadAssets = async (tag: string) => {
+  const loadAssets = useCallback(async (tag: string) => {
     try {
       const assets = await api.listReleaseAssets(owner, repoName, tag)
       setAssetsMap(prev => ({ ...prev, [tag]: assets || [] }))
     } catch {
       // Silently fail
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     releases.forEach(release => {
       loadAssets(release.tag)
     })
-  }, [releases])
+  }, [releases, loadAssets])
 
   const openUploadModal = (tag: string) => {
     setUploadTargetTag(tag)

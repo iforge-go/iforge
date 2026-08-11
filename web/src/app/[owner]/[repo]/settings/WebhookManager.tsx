@@ -33,7 +33,7 @@ import {
   Tooltip,
 } from '@chakra-ui/react'
 import { FiPlus, FiTrash2, FiSend, FiClock, FiCheck, FiX } from 'react-icons/fi'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api, Webhook, WebhookDelivery } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useGithubToast } from '@/app/providers'
@@ -67,7 +67,7 @@ export default function WebhookManager({ owner, repoName }: WebhookManagerProps)
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [confirmAction, setConfirmAction] = useState<(() => void) | null>(null)
 
-  const loadWebhooks = async () => {
+  const loadWebhooks = useCallback(async () => {
     setLoading(true)
     try {
       const data = await api.listWebhooks(owner, repoName)
@@ -82,11 +82,11 @@ export default function WebhookManager({ owner, repoName }: WebhookManagerProps)
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName, toast, t])
 
   useEffect(() => {
     loadWebhooks()
-  }, [owner, repoName])
+  }, [loadWebhooks])
 
   const handleCreate = async () => {
     if (!newUrl) {

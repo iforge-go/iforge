@@ -24,7 +24,7 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, LFSObject } from '@/lib/api'
 import { FiTrash2 } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
@@ -56,7 +56,7 @@ export default function LFSManager({ owner, repoName }: LFSManagerProps) {
   const [deletingOid, setDeletingOid] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const res = await api.listLFSObjects(owner, repoName, 1, 100)
@@ -66,11 +66,11 @@ export default function LFSManager({ owner, repoName }: LFSManagerProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadData()
-  }, [owner, repoName])
+  }, [loadData])
 
   const handleConfirmDelete = async () => {
     if (!deletingOid) return

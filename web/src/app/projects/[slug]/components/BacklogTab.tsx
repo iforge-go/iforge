@@ -21,7 +21,6 @@ import {
   AlertDialogFooter,
   Badge,
 } from '@chakra-ui/react'
-import { keyframes } from '@emotion/react'
 import { FiPlus, FiSearch, FiRepeat } from 'react-icons/fi'
 import {
   DndContext,
@@ -36,20 +35,12 @@ import {
 import { api } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useProject } from '../ProjectContext'
-import { getEpicColor } from '@/lib/epicColor'
 import UserStoryDrawer, { type UserStoryFormData } from '@/components/UserStoryDrawer'
 import SprintDrawer, { type SprintFormData } from '@/components/SprintDrawer'
 import EpicDrawer, { type EpicFormData } from '../epics/components/EpicDrawer'
 import EpicSidebar from './backlog/EpicSidebar'
 import SprintColumn from './backlog/SprintColumn'
 import BacklogColumn from './backlog/BacklogColumn'
-
-// 新建故事高亮动画：黄色闪烁后渐变为淡蓝色背景
-const highlightPulse = keyframes`
-  0% { background-color: #fef3c7; }
-  30% { background-color: #fef3c7; }
-  100% { background-color: #ebf8ff; }
-`
 
 // 优先级色点颜色(与 BacklogStoryRow 一致)
 const PRIORITY_DOT_COLORS: Record<string, string> = {
@@ -159,9 +150,8 @@ export default function BacklogTab({
   )
 
   // --- DnD 配置(复用 KanbanBoard 模式) ---
-  const sensors = useSensors(
-    ...(canEditScrum ? [useSensor(PointerSensor, { activationConstraint: { distance: 8 } })] : [])
-  )
+  const pointerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+  const sensors = useSensors(...(canEditScrum ? [pointerSensor] : []))
 
   const activeDragStory = activeDragStorySlug
     ? allStories.find(s => s.slug === activeDragStorySlug) || null

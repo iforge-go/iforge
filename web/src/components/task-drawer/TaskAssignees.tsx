@@ -38,9 +38,9 @@ export default function TaskAssignees({
   searchKeyword,
   setSearchKeyword,
   searchResults,
-  setSearchResults,
+  setSearchResults: _setSearchResults,
   searchLoading,
-  setSearchLoading,
+  setSearchLoading: _setSearchLoading,
   isPopoverOpen,
   setIsPopoverOpen,
 }: TaskAssigneesProps) {

@@ -18,7 +18,6 @@ import {
   InputGroup,
   InputLeftElement,
   InputRightElement,
-  useToast,
 } from '@chakra-ui/react'
 import { FiFolder, FiRepeat, FiBook, FiUsers, FiPlus, FiClock, FiSearch, FiX } from 'react-icons/fi'
 import { Suspense, useEffect, useMemo, useState } from 'react'
@@ -43,7 +42,6 @@ const getRoleLabel = (t: (k: string) => string, role: string) => {
 function ScrumContent() {
   const router = useRouter()
   const { t } = useI18n()
-  const toast = useToast()
   const { user, authLoading } = useCurrentUser()
   const searchParams = useSearchParams()
   const [projects, setProjects] = useState<any[]>([])

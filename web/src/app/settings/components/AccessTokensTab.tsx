@@ -54,7 +54,7 @@ export default function AccessTokensTab({ isActive }: AccessTokensTabProps) {
         toast({ title: t('settings.loadTokensFailed'), description: err.message, status: 'error', duration: 3000 })
       })
       .finally(() => setTokenLoading(false))
-  }, [isActive])
+  }, [isActive, t, toast])
 
   const handleCreateToken = async () => {
     if (!newTokenNote.trim()) {

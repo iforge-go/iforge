@@ -165,7 +165,7 @@ export default function PipelineDetailPage() {
     if (!isActive) return
     const timer = setInterval(load, 3000)
     return () => clearInterval(timer)
-  }, [pipeline?.status, load])
+  }, [pipeline?.status, load, pipeline])
 
   const handleCancel = async () => {
     try {

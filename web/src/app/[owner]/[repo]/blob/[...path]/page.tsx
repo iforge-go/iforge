@@ -32,9 +32,9 @@ import jsonLang from 'highlight.js/lib/languages/json'
 import yaml from 'highlight.js/lib/languages/yaml'
 import bash from 'highlight.js/lib/languages/bash'
 import 'highlight.js/styles/github.css'
-import { api, FileEntry, CommitInfo, SERVER_BASE } from '@/lib/api'
+import { api, FileEntry, CommitInfo } from '@/lib/api'
 import { parseBranchAndPath, shouldWaitForBranches } from '@/lib/branchPath'
-import { FiFile, FiChevronRight, FiGitBranch, FiEdit, FiCopy, FiDownload } from 'react-icons/fi'
+import { FiFile, FiChevronRight, FiEdit, FiCopy, FiDownload } from 'react-icons/fi'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import { useI18n } from '@/contexts/I18nContext'
 import { useGithubToast } from '@/app/providers'
@@ -144,7 +144,7 @@ export default function BlobPage() {
     }
 
     loadData()
-  }, [owner, repoName, filePath, ref, branchesLoaded])
+  }, [owner, repoName, filePath, ref, branchesLoaded, branches, pathSegments])
 
   const pathParts = filePath ? filePath.split('/').filter(Boolean) : []
   const breadcrumbs = [
@@ -304,7 +304,7 @@ function HighlightedCode({ content, filePath }: { content: string; filePath: str
       if (lang && hljs.getLanguage(lang)) {
         return hljs.highlight(content, { language: lang, ignoreIllegals: true }).value
       }
-    } catch (e) {
+    } catch {
       // fall through
     }
     return hljs.highlightAuto(content).value

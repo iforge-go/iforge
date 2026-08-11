@@ -350,7 +350,6 @@ function getTypeIcon(type: string) {
 
 function WebSocketStatusIndicator() {
   const isConnected = useWebSocketStatus()
-  const { t } = useI18n()
   return (
     <HStack spacing={1} color={isConnected ? 'green.500' : 'myGray.400'}>
       <Box

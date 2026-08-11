@@ -12,7 +12,6 @@ import {
   FormLabel,
   Input,
   Textarea,
-  Switch,
   Icon,
   Radio,
   RadioGroup,
@@ -59,19 +58,19 @@ export default function NewRepoContent() {
       try {
         const organizationsData = await api.listMyOrganizations()
         setOrganizations(organizationsData || [])
-      } catch (error) {
+      } catch {
         router.push('/login')
       }
     }
     loadData()
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (user) {
       const urlOwner = searchParams.get('owner')
       setFormData(prev => ({ ...prev, owner: urlOwner || user.userName }))
     }
-  }, [user])
+  }, [user, searchParams])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

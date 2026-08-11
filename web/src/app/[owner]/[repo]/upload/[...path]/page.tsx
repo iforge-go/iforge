@@ -12,37 +12,24 @@ import {
   Button,
   Input,
   Select,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { api } from '@/lib/api'
 import { parseBranchAndPath } from '@/lib/branchPath'
-import { FiUpload, FiChevronRight, FiFile, FiX, FiCheckCircle } from 'react-icons/fi'
+import { FiUpload, FiChevronRight, FiFile, FiX } from 'react-icons/fi'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import { useGithubToast } from '@/app/providers'
 import { useI18n } from '@/contexts/I18nContext'
 
 export default function UploadFilePage() {
   const params = useParams()
-  const router = useRouter()
   const owner = params.owner as string
   const repoName = params.repo as string
   const pathSegments = params.path as string[]
 
-  const { branches, userRole, refreshData } = useRepo()
+  const { branches, refreshData } = useRepo()
   const toast = useGithubToast()
   const { t } = useI18n()
 
@@ -65,8 +52,6 @@ export default function UploadFilePage() {
   const [uploading, setUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
-
-  const canUpload = userRole === 'owner' || userRole === 'member'
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()

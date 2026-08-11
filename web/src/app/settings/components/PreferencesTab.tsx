@@ -28,7 +28,7 @@ export default function PreferencesTab({ isActive }: PreferencesTabProps) {
   const [saving, setSaving] = useState(false)
 
   // Account Preferences state
-  const [preferences, setPreferences] = useState<AccountPreference | null>(null)
+  const [, setPreferences] = useState<AccountPreference | null>(null)
   const [prefLoading, setPrefLoading] = useState(false)
   const [prefForm, setPrefForm] = useState({
     highlighterTheme: 'github',
@@ -53,7 +53,7 @@ export default function PreferencesTab({ isActive }: PreferencesTabProps) {
         toast({ title: t('settings.preferencesSaveFailed'), description: err.message, status: 'error', duration: 3000 })
       })
       .finally(() => setPrefLoading(false))
-  }, [isActive])
+  }, [isActive, t, toast])
 
   const handleSavePreferences = async () => {
     setSaving(true)

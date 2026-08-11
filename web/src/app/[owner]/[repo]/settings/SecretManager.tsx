@@ -32,7 +32,7 @@ import {
   AlertIcon,
 } from '@chakra-ui/react'
 import { FiPlus, FiTrash2, FiKey, FiEdit2 } from 'react-icons/fi'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api, Secret } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useGithubToast } from '@/app/providers'
@@ -58,7 +58,7 @@ export default function SecretManager({ owner, repoName }: SecretManagerProps) {
   const [deleteTarget, setDeleteTarget] = useState<Secret | null>(null)
   const [deleting, setDeleting] = useState(false)
 
-  const loadSecrets = async () => {
+  const loadSecrets = useCallback(async () => {
     setLoading(true)
     try {
       const resp = await api.listSecrets(owner, repoName)
@@ -68,11 +68,11 @@ export default function SecretManager({ owner, repoName }: SecretManagerProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName, toast])
 
   useEffect(() => {
     loadSecrets()
-  }, [owner, repoName])
+  }, [loadSecrets])
 
   const openCreate = () => {
     setEditKey('')

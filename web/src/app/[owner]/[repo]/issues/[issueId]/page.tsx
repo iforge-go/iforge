@@ -129,7 +129,7 @@ export default function IssueDetailPage() {
         }
       })
       .finally(() => setLoading(false))
-  }, [owner, repoName, issueId])
+  }, [owner, repoName, issueId, router])
 
   // Search users with debounce (for assignee picker)
   useEffect(() => {

@@ -21,7 +21,7 @@ import {
   useDisclosure,
   SimpleGrid,
 } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { FiEdit2, FiTrash2, FiPlus } from 'react-icons/fi'
 import { api, Label } from '@/lib/api'
@@ -68,7 +68,7 @@ export default function LabelsPage() {
   // Developer 及以上权限可以管理标签
   const canManageLabels = userRole === 'owner' || userRole === 'member'
 
-  const loadLabels = async () => {
+  const loadLabels = useCallback(async () => {
     try {
       setLoading(true)
       const data = await api.listLabels(owner, repoName)
@@ -83,11 +83,11 @@ export default function LabelsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName, toast, t])
 
   useEffect(() => {
     loadLabels()
-  }, [owner, repoName])
+  }, [loadLabels])
 
   const handleCreateLabel = async () => {
     if (!newLabelName.trim()) {

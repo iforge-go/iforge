@@ -10,7 +10,6 @@ import {
   Avatar,
   Code,
   Badge,
-  Divider,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -21,8 +20,8 @@ import {
 import Link from 'next/link'
 import { useEffect, useState, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
-import { api, CommitInfo, FileChange, CombinedCommitStatus, Deployment } from '@/lib/api'
-import { FiCopy, FiCheck, FiGitCommit, FiFileText, FiChevronRight, FiCheckCircle, FiXCircle, FiClock, FiAlertCircle, FiPackage, FiExternalLink } from 'react-icons/fi'
+import { api, CommitInfo, CombinedCommitStatus, Deployment } from '@/lib/api'
+import { FiCopy, FiCheck, FiChevronRight, FiCheckCircle, FiXCircle, FiClock, FiAlertCircle, FiPackage, FiExternalLink, FiFileText } from 'react-icons/fi'
 import { useGithubToast } from '@/app/providers'
 import { FileTree } from '@/components/FileTree'
 import { SplitDiffView } from '@/components/SplitDiffView'

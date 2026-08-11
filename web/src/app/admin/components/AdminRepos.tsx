@@ -1,7 +1,7 @@
 'use client'
 
-import { Box, Heading, Text, Button, VStack, HStack, Table, Thead, Tbody, Tr, Th, Td, Badge, Icon, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, ModalCloseButton, FormControl, FormLabel, Input, Select } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { Box, Heading, Text, Button, VStack, HStack, Table, Thead, Tbody, Tr, Th, Td, Badge, Icon, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, ModalCloseButton, FormControl, FormLabel, Input } from '@chakra-ui/react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, Repository } from '@/lib/api'
 import { FiFolder, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
 import { useGithubToast } from '@/app/providers'
@@ -19,7 +19,7 @@ export default function AdminRepos() {
   const [deletingRepo, setDeletingRepo] = useState<Repository | null>(null)
   const [deleteConfirm, setDeleteConfirm] = useState('')
 
-  const loadRepos = async () => {
+  const loadRepos = useCallback(async () => {
     setLoading(true)
     try {
       const data = await api.adminListRepos(page, limit)
@@ -30,11 +30,11 @@ export default function AdminRepos() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [page, limit])
 
   useEffect(() => {
     loadRepos()
-  }, [page])
+  }, [loadRepos])
 
   const handleConfirmDelete = async () => {
     if (!deletingRepo) return

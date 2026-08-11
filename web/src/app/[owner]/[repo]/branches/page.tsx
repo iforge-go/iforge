@@ -23,8 +23,8 @@ import {
   Spinner,
   Tooltip,
 } from '@chakra-ui/react'
-import { useParams, useRouter } from 'next/navigation'
-import { FiGitBranch, FiCheck, FiPlus, FiTrash2, FiEdit2, FiShield, FiShieldOff } from 'react-icons/fi'
+import { useParams } from 'next/navigation'
+import { FiGitBranch, FiPlus, FiTrash2, FiEdit2, FiShield, FiShieldOff } from 'react-icons/fi'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import { api } from '@/lib/api'
 import { useGithubToast } from '@/app/providers'
@@ -33,10 +33,9 @@ import { useI18n } from '@/contexts/I18nContext'
 
 export default function BranchesPage() {
   const params = useParams()
-  const router = useRouter()
   const owner = params.owner as string
   const repoName = params.repo as string
-  const { branches, repo, refreshData, userRole } = useRepo()
+  const { branches, refreshData, userRole } = useRepo()
   const toast = useGithubToast()
   const { t } = useI18n()
   const { isOpen, onOpen, onClose } = useDisclosure()

@@ -60,14 +60,15 @@ export default function PipelinesPage() {
     }
   }, [owner, repoName])
 
+  const hasActivePipeline = pipelines.some(p => p.status === 'pending' || p.status === 'running')
+
   useEffect(() => {
     load()
     // 自动刷新:每 5 秒(有 pending/running 时)
-    const hasActive = pipelines.some(p => p.status === 'pending' || p.status === 'running')
-    if (!hasActive) return
+    if (!hasActivePipeline) return
     const timer = setInterval(load, 5000)
     return () => clearInterval(timer)
-  }, [owner, repoName, load, pipelines.some(p => p.status === 'pending' || p.status === 'running')])
+  }, [owner, repoName, load, hasActivePipeline])
 
   const handleRefresh = () => {
     setRefreshing(true)

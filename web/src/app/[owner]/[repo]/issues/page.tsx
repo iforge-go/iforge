@@ -82,7 +82,7 @@ export default function IssuesPage() {
   const params = useParams()
   const owner = params.owner as string
   const repoName = params.repo as string
-  const { refreshData, userRole, canCreateIssue } = useRepo()
+  const { refreshData, userRole } = useRepo()
   const { t } = useI18n()
   const toast = useGithubToast()
 

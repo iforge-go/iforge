@@ -14,7 +14,6 @@ import {
   Button,
   Icon,
   Badge,
-  useToast,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -25,7 +24,7 @@ import {
   Spinner,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api, CustomField } from '@/lib/api'
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import { useI18n } from '@/contexts/I18nContext'
@@ -56,7 +55,7 @@ export default function CustomFieldManager({ owner, repoName }: CustomFieldManag
     enableForMergeRequests: false,
   })
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true)
     try {
       const list = await api.listCustomFields(owner, repoName).catch(() => [])
@@ -64,11 +63,11 @@ export default function CustomFieldManager({ owner, repoName }: CustomFieldManag
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadData()
-  }, [owner, repoName])
+  }, [loadData])
 
   const resetForm = () => {
     setForm({ fieldName: '', fieldType: 'text', constraints: '', enableForIssues: true, enableForMergeRequests: false })

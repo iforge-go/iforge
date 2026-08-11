@@ -9,7 +9,6 @@ import {
   Badge,
   Spinner,
   Link,
-  Code,
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
 import { useEffect, useState } from 'react'

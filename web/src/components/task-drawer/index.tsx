@@ -37,14 +37,14 @@ import {
   PopoverBody,
   Stack,
 } from '@chakra-ui/react'
-import { FiUser, FiTag, FiTrash2, FiPlus, FiChevronDown, FiChevronRight, FiRepeat, FiBook, FiClock, FiActivity, FiGitCommit, FiCpu, FiCalendar, FiX, FiExternalLink } from 'react-icons/fi'
+import { FiTag, FiTrash2, FiPlus, FiChevronDown, FiRepeat, FiBook, FiClock, FiActivity, FiGitCommit, FiCpu, FiCalendar, FiX, FiExternalLink } from 'react-icons/fi'
 import NextLink from 'next/link'
 import { api } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { useCurrentUser } from '@/contexts/UserContext'
 import { UserSearchResult, BranchCommits, AIOptimizeTaskResult, Participant, Task, TaskStatus, TaskComment, TaskWorkLog, TaskStatusHistory, Sprint, UserStory, ScrumActivity } from '@/lib/types'
 import { ApiError } from '@/lib/errorMessages'
-import { getPriorityLabelKey, getPriorityColor, getStatusColor } from './taskMeta'
+import { getPriorityLabelKey, getPriorityColor } from './taskMeta'
 
 // 任务详情响应类型（包含 sideload 数据）
 interface TaskDetailResponse {
@@ -100,7 +100,6 @@ export default function TaskDrawer({ isOpen, taskId, onClose, projectSlug, taskS
   const { user: currentUser } = useCurrentUser()
   const isCreateMode = mode === 'create'
   const isEditMode = mode === 'edit'
-  const canEdit = isCreateMode || canEditScrum
   const taskStatuses = taskStatusesProp || []
 
   const [taskDetail, setTaskDetail] = useState<Task | null>(null)
@@ -275,7 +274,14 @@ export default function TaskDrawer({ isOpen, taskId, onClose, projectSlug, taskS
       api.getTaskStatusHistory(projectSlug, taskId).then((data) => setStatusHistory(data || [])).catch(() => {}),
       api.getTaskCommits(projectSlug, taskId).then((res) => setTaskCommits(res?.branches || [])).catch(() => {}).finally(() => setTaskCommitsLoading(false)),
     ]).finally(() => setTaskDetailLoading(false))
-  }, [taskId, projectSlug, isCreateMode])
+  }, [taskId, projectSlug, isCreateMode, canEditScrum, isEditMode])
+
+  // Sync editing state when edit-mode / permission changes (without reloading task data)
+  useEffect(() => {
+    if (taskDetail && taskDetail.taskId) {
+      setIsEditing(canEditScrum || isEditMode)
+    }
+  }, [taskDetail, canEditScrum, isEditMode])
 
   // Load breadcrumb context in create mode (from props)
   useEffect(() => {

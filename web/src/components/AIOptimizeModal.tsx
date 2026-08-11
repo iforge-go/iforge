@@ -102,8 +102,6 @@ export default function AIOptimizeModal<T extends OptimizeType = 'story'>({
   // 结果出来后的视图切换：'process' 对话过程回看（默认）/ 'result' 优化结果表单
   const [viewTab, setViewTab] = useState<'result' | 'process'>('process')
   const streamRef = useRef<HTMLDivElement>(null)
-  const processScrollRef = useRef<HTMLDivElement>(null)
-
   const loadOptimize = async () => {
     setLoading(true)
     setError(null)

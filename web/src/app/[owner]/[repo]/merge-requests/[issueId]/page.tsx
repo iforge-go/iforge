@@ -9,7 +9,6 @@ import {
   Icon,
   Spinner,
   Badge,
-  Avatar,
   Tabs,
   TabList,
   Tab,
@@ -24,8 +23,8 @@ import {
   ModalCloseButton,
 } from '@chakra-ui/react'
 import { useGithubToast } from '@/app/providers'
-import { useParams, useRouter } from 'next/navigation'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useParams } from 'next/navigation'
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { api, MergeRequest, Comment, Review, ReviewStatus, Participant } from '@/lib/api'
 import { useRepo } from '@/app/[owner]/[repo]/RepoContext'
 import {
@@ -58,11 +57,10 @@ interface CompareResult {
 
 export default function MergeRequestDetailPage() {
   const params = useParams()
-  const router = useRouter()
   const owner = params.owner as string
   const repoName = params.repo as string
   const issueId = parseInt(params.issueId as string)
-  const { branches, userRole, refreshData } = useRepo()
+  const { userRole, refreshData } = useRepo()
   const toast = useGithubToast()
   const { t, locale } = useI18n()
   const dateLocale = locale === 'zh' ? 'zh-CN' : 'en-US'
@@ -126,9 +124,7 @@ export default function MergeRequestDetailPage() {
     return map
   }, [participants, mr])
 
-  const allParticipants = useMemo(() => Array.from(participantMap.values()), [participantMap])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     // StrictMode 双调用互斥：第二次并发调用直接跳过，避免 compare 被请求两次
     if (loadingRef.current) return
     loadingRef.current = true
@@ -198,7 +194,7 @@ export default function MergeRequestDetailPage() {
       loadingRef.current = false
       setLoading(false)
     }
-  }
+  }, [owner, repoName, issueId, toast, t])
 
   // reloadReviews 只刷新 review 列表及其内联评论，不触碰 MR 本身和 compare 结果。
   // 用于 review 提交/删除后：这些操作不改变 commit graph，无需重跑 compare。
@@ -231,7 +227,7 @@ export default function MergeRequestDetailPage() {
 
   useEffect(() => {
     loadData()
-  }, [owner, repoName, issueId])
+  }, [loadData])
 
   const handleMerge = async (strategy: string) => {
     if (!mr) return

@@ -1,7 +1,7 @@
 'use client'
 
 import { Box, Tabs, TabList, TabPanels, Tab, TabPanel, Text, VStack, Icon } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { api, ColumnInfo, QueryResult } from '@/lib/api'
 import { useI18n } from '@/contexts/I18nContext'
 import { FiDatabase } from 'react-icons/fi'
@@ -10,19 +10,19 @@ import DatabaseDataPanel from './DatabaseDataPanel'
 
 interface DatabaseTableDetailProps {
   tableName: string | null
-  onRefreshTables: () => void
+  onRefreshTables?: () => void
 }
 
 export default function DatabaseTableDetail({
   tableName,
-  onRefreshTables,
+  onRefreshTables: _onRefreshTables,
 }: DatabaseTableDetailProps) {
   const { t } = useI18n()
   const [schema, setSchema] = useState<ColumnInfo[]>([])
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const loadTableData = async () => {
+  const loadTableData = useCallback(async () => {
     if (!tableName) return
 
     try {
@@ -38,13 +38,13 @@ export default function DatabaseTableDetail({
     } finally {
       setLoading(false)
     }
-  }
+  }, [tableName])
 
   useEffect(() => {
     if (tableName) {
       loadTableData()
     }
-  }, [tableName])
+  }, [tableName, loadTableData])
 
   if (!tableName) {
     return (

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"iforge/iforge/internal/model"
 	"testing"
+	"time"
 )
 
 // TestJobYAML_ShouldRun tests if job should run on specified ref
@@ -1183,6 +1184,11 @@ build:
 	if err != nil {
 		t.Fatalf("UpdateJobStatus failed: %v", err)
 	}
+
+	// Wait for async refreshPipelineStatus goroutine (spawned by UpdateJobStatus) to settle,
+	// otherwise it races with the manual Pipeline status update and RetryPipeline transaction below,
+	// causing SQLite "database table is locked" deadlocks.
+	time.Sleep(200 * time.Millisecond)
 
 	// Manually update Pipeline status to failed
 	err = db.Model(&model.Pipeline{}).Where("id = ?", pipeline.ID).

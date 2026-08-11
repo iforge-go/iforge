@@ -9,13 +9,12 @@ import {
   VStack,
   HStack,
   Icon,
-  Link as ChakraLink,
   SimpleGrid,
   Card,
   CardBody,
   Badge,
 } from '@chakra-ui/react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { api } from '@/lib/api'
 import type { WikiPage } from '@/lib/api'
@@ -33,7 +32,7 @@ export default function WikiPage() {
   const [pages, setPages] = useState<WikiPage[]>([])
   const [loading, setLoading] = useState(true)
 
-  const loadPages = async () => {
+  const loadPages = useCallback(async () => {
     try {
       const data = await api.listWikiPages(owner, repoName)
       setPages(data || [])
@@ -42,11 +41,11 @@ export default function WikiPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [owner, repoName])
 
   useEffect(() => {
     loadPages()
-  }, [owner, repoName])
+  }, [loadPages])
 
   if (loading) {
     return (
