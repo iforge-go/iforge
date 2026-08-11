@@ -15,9 +15,9 @@ function getLocale(request: NextRequest): 'zh' | 'en' {
 }
 
 // In-memory cache for setup/status (Edge Runtime doesn't support next.revalidate).
-// In standalone mode the middleware process persists, so this cache is shared across requests.
+// Setup status is immutable once initialized — cache aggressively to eliminate redundant fetches.
 let setupStatusCache: { initialized: boolean; ts: number } | null = null
-const SETUP_STATUS_TTL = 60_000 // 60 seconds
+const SETUP_STATUS_TTL = 300_000 // 5 minutes (setup status never changes after initialization)
 
 async function getSetupStatus(): Promise<boolean> {
   const now = Date.now()
@@ -31,7 +31,6 @@ async function getSetupStatus(): Promise<boolean> {
     return !!data.initialized
   } catch (err) {
     console.error('[proxy] setup/status fetch failed:', err)
-    // On error, assume initialized to avoid blocking users
     return true
   }
 }
@@ -47,14 +46,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const initialized = await getSetupStatus()
+  // Only check setup status for '/' and '/setup' — these are the only paths
+  // where the redirect logic matters. All other paths skip the fetch entirely,
+  // eliminating redundant /setup/status calls on every page navigation.
+  if (pathname === '/' || pathname === '/setup') {
+    const initialized = await getSetupStatus()
 
-  if (!initialized && pathname !== '/setup') {
-    return NextResponse.redirect(new URL('/setup', request.url))
-  }
+    if (!initialized && pathname !== '/setup') {
+      return NextResponse.redirect(new URL('/setup', request.url))
+    }
 
-  if (initialized && pathname === '/setup') {
-    return NextResponse.redirect(new URL('/', request.url))
+    if (initialized && pathname === '/setup') {
+      return NextResponse.redirect(new URL('/', request.url))
+    }
   }
 
   // 把当前 pathname 和 locale 注入到 request header,供 server component 的 generateMetadata 读取。
