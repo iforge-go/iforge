@@ -22,7 +22,7 @@
     "dompurify": "^3.4.12",
     "framer-motion": "^10.16.16",
     "highlight.js": "^11.11.1",
-    "next": "16.2.9",
+    "next": "16.3.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-icons": "^5.6.0",
