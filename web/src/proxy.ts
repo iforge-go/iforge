@@ -14,6 +14,28 @@ function getLocale(request: NextRequest): 'zh' | 'en' {
   return acceptLang.toLowerCase().startsWith('zh') ? 'zh' : 'en'
 }
 
+// In-memory cache for setup/status (Edge Runtime doesn't support next.revalidate).
+// In standalone mode the middleware process persists, so this cache is shared across requests.
+let setupStatusCache: { initialized: boolean; ts: number } | null = null
+const SETUP_STATUS_TTL = 60_000 // 60 seconds
+
+async function getSetupStatus(): Promise<boolean> {
+  const now = Date.now()
+  if (setupStatusCache && now - setupStatusCache.ts < SETUP_STATUS_TTL) {
+    return setupStatusCache.initialized
+  }
+  try {
+    const response = await fetch(`${API_BASE}/setup/status`)
+    const data = await response.json()
+    setupStatusCache = { initialized: !!data.initialized, ts: now }
+    return !!data.initialized
+  } catch (err) {
+    console.error('[proxy] setup/status fetch failed:', err)
+    // On error, assume initialized to avoid blocking users
+    return true
+  }
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -25,21 +47,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  try {
-    const response = await fetch(`${API_BASE}/setup/status`, {
-      next: { revalidate: 60 },
-    })
-    const data = await response.json()
+  const initialized = await getSetupStatus()
 
-    if (!data.initialized && pathname !== '/setup') {
-      return NextResponse.redirect(new URL('/setup', request.url))
-    }
+  if (!initialized && pathname !== '/setup') {
+    return NextResponse.redirect(new URL('/setup', request.url))
+  }
 
-    if (data.initialized && pathname === '/setup') {
-      return NextResponse.redirect(new URL('/', request.url))
-    }
-  } catch (err) {
-    console.error('[proxy] setup/status fetch failed:', err)
+  if (initialized && pathname === '/setup') {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
   // 把当前 pathname 和 locale 注入到 request header,供 server component 的 generateMetadata 读取。
