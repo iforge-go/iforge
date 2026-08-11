@@ -34,5 +34,9 @@ Thumbs.db
 web/.next/
 web/out/
 
+# Test coverage
+server/coverage.out
+server/coverage
+
 # Executables
 *.exe*

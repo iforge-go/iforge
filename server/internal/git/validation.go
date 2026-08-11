@@ -71,8 +71,13 @@ func ValidateRepoPath(path string) error {
 	// Normalize path
 	path = filepath.Clean(path)
 
-	// Must not be absolute
-	if filepath.IsAbs(path) {
+	// Must not start with / or \ (checked before IsAbs for consistent error message across platforms)
+	if strings.HasPrefix(path, "/") || strings.HasPrefix(path, "\\") {
+		return fmt.Errorf("path cannot start with /")
+	}
+
+	// Must not be absolute (Unix filepath.IsAbs, or Windows drive path like C:\)
+	if filepath.IsAbs(path) || isWindowsDrivePath(path) {
 		return fmt.Errorf("path must be relative")
 	}
 
@@ -86,12 +91,16 @@ func ValidateRepoPath(path string) error {
 		return fmt.Errorf("path contains invalid characters")
 	}
 
-	// Must not start with / or \
-	if strings.HasPrefix(path, "/") || strings.HasPrefix(path, "\\") {
-		return fmt.Errorf("path cannot start with /")
-	}
-
 	return nil
+}
+
+// isWindowsDrivePath checks for Windows drive-letter paths like C:\ or C:/ (works on all platforms).
+func isWindowsDrivePath(path string) bool {
+	return len(path) >= 3 && path[1] == ':' && (path[2] == '\\' || path[2] == '/') && isAlpha(path[0])
+}
+
+func isAlpha(c byte) bool {
+	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z')
 }
 
 // IsValidCommitHash validates a commit hash format (7 or 40 hex characters).
