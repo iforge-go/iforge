@@ -72,9 +72,17 @@ export default function SetupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // 用户名必须通过实时校验为"可用"才允许提交
-    if (usernameStatus !== 'available') {
+    // 用户名不可用时阻止提交；校验中则提示稍候
+    if (usernameStatus === 'idle' && !formData.adminUsername.trim()) {
+      toast({ title: t('auth.usernameRequired'), status: 'warning', duration: 2000 })
+      return
+    }
+    if (usernameStatus === 'invalid' || usernameStatus === 'reserved' || usernameStatus === 'taken') {
       toast({ title: t('auth.usernameNotConfirmed'), status: 'warning', duration: 2000 })
+      return
+    }
+    if (usernameStatus === 'checking') {
+      toast({ title: t('auth.usernameChecking'), status: 'info', duration: 2000 })
       return
     }
     if (!validate()) return
