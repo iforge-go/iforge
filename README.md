@@ -4,56 +4,56 @@
 
 # iForge
 
-### 将任务、代码与交付串联起来的自托管研发协作平台
+### A Self-Hosted R&D Collaboration Platform Connecting Tasks, Code, and Delivery
 
 [![Go](https://img.shields.io/badge/Go-1.26+-00ADD8?style=flat-square&logo=go)](https://go.dev/)
 [![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 
-[在线演示](#在线演示) · [快速开始](#快速开始) · [核心能力](#核心能力) · [部署](#生产部署) · [架构](#架构) · [开发](#本地开发)
+[Live Demo](#live-demo) · [Quick Start](#quick-start) · [Core Features](#core-features) · [Deployment](#production-deployment) · [Architecture](#architecture) · [Development](#local-development)
 
-![iForge 看板预览](screenshot-kanban.png)
+![iForge Kanban Preview](screenshot-kanban.png)
 
 ![iForge Task-MR](screenshot-task-mr.png)
 
-## 在线演示
+## Live Demo
 
-访问 [https://demo.iforge-go.com](https://demo.iforge-go.com) 体验完整功能。
+Visit [https://demo.iforge-go.com](https://demo.iforge-go.com) to explore the full platform.
 
-| 用户名 | 密码 | 角色 |
-|--------|------|------|
-| iforge | iforge | 普通用户 |
+| Username | Password | Role |
+|----------|----------|------|
+| iforge   | iforge   | Regular user |
 
-演示站每日凌晨 3:00 自动重置数据。
+The demo site resets data daily at 3:00 AM (UTC+8).
 
 </div>
 
-## iForge 是什么
+## What is iForge?
 
-iForge 面向希望把项目管理和代码协作放在同一工作流中的团队。它将 **Story / Task、Git 分支、提交、合并请求（MR）、CI/CD 与发布**连接在一起，让工作项从需求到交付可追溯、可协作。
+iForge is designed for teams who want to keep project management and code collaboration in the same workflow. It connects **Stories / Tasks, Git branches, commits, Merge Requests (MRs), CI/CD, and Releases**, making work items traceable from requirements to delivery.
 
 ```text
-需求 → Story / Task → 分支 → 提交 → MR / 评审 → Pipeline → 发布
+Requirements → Stories / Tasks → Branches → Commits → MRs / Reviews → Pipeline → Releases
 ```
 
-项目可自托管，提供浏览器界面、Git HTTP/SSH 协议和外置 Runner 接入能力。
+The platform is self-hosted, providing a web interface, Git HTTP/SSH protocols, and external Runner integration capabilities.
 
-## 核心能力
+## Core Features
 
-| 领域 | 能力 |
+| Domain | Capabilities |
 | --- | --- |
-| 代码托管 | 仓库创建、导入、Fork、分支与标签、文件浏览、Diff、归档下载、Git HTTP 和 SSH |
-| 协作与评审 | Issue、评论、标签、里程碑、合并请求、逐行评论、Approve / Request changes、分支保护 |
-| 敏捷管理 | 项目、Sprint、Epic、Story、Task、看板、依赖、工时、状态流转与活动记录 |
-| AI 辅助 | AI 驱动的任务拆解与用户故事生成，支持自定义模型配置，辅助需求分析与工作优化 |
-| 任务驱动开发 | 从任务创建/关联分支，提交与 MR 关联工作项，交付状态可回溯 |
-| CI/CD | `.iforge-ci.yml` 流水线、DAG 依赖、日志、制品、环境、部署、定时任务与外置 Runner |
-| 通知与集成 | WebSocket 实时通知、Webhook、插件事件、邮件通知、LDAP / OIDC 认证选项 |
-| 平台管理 | 组织与成员、访问令牌、SSH/GPG Key、审计、系统设置与 AI 模型配置 |
+| Code Hosting | Repository creation, import, Fork, branches and tags, file browsing, Diff, archive download, Git HTTP and SSH |
+| Collaboration & Review | Issues, comments, labels, milestones, merge requests, line-by-line comments, Approve / Request changes, branch protection |
+| Agile Management | Projects, Sprints, Epics, Stories, Tasks, Kanban boards, dependencies, work hours, status transitions, and activity logs |
+| AI Assistance | AI-driven task decomposition and user story generation, supporting custom model configuration for requirements analysis and work optimization |
+| Task-Driven Development | Create/associate branches from tasks, link commits and MRs to work items, with traceable delivery status |
+| CI/CD | `.iforge-ci.yml` pipelines, DAG dependencies, logs, artifacts, environments, deployments, scheduled tasks, and external Runners |
+| Notifications & Integrations | WebSocket real-time notifications, Webhooks, plugin events, email notifications, LDAP / OIDC authentication options |
+| Platform Management | Organizations and members, access tokens, SSH/GPG Keys, auditing, system settings, and AI model configuration |
 
-## 快速开始
+## Quick Start
 
-最简单的本地体验方式是 Docker Compose。默认使用 SQLite，适合本地开发和功能体验。
+The simplest way to try it locally is with Docker Compose. SQLite is used by default, suitable for local development and feature exploration.
 
 ```bash
 git clone https://github.com/iforge-go/iforge.git
@@ -63,33 +63,33 @@ cp .env.example .env
 docker compose up -d --build
 ```
 
-启动后访问 `http://localhost:3000`，首次使用时完成管理员初始化。
+After startup, visit `http://localhost:3000` and complete the administrator initialization on first use.
 
-常用命令：
+Common commands:
 
 ```bash
 docker compose logs -f
 docker compose down
 ```
 
-Git HTTP 默认映射到宿主机 `8080`，SSH 默认映射到 `22`。若端口冲突，请在 `.env` 中调整 `IFORGE_HTTP_PORT` 与 `IFORGE_SSH_PORT`。
+Git HTTP is mapped to host port `8080` by default, and SSH to port `22`. If there are port conflicts, adjust `IFORGE_HTTP_PORT` and `IFORGE_SSH_PORT` in `.env`.
 
-## 生产部署
+## Production Deployment
 
-### 数据库选择
+### Database Selection
 
-| 场景 | 建议 |
+| Scenario | Recommendation |
 | --- | --- |
-| 本地开发、演示、单人体验 | SQLite |
-| 已运行的生产环境 | MySQL 8.0+ |
-| 新生产环境、复杂查询或未来多实例规划 | PostgreSQL 16+ |
+| Local development, demos, single-user | SQLite |
+| Existing production environment | MySQL 8.0+ |
+| New production environment, complex queries, or future multi-instance planning | PostgreSQL 16+ |
 
-MySQL 8 是受支持的生产数据库，无须为性能原因立即迁移。SQLite 不适合多实例或高并发写入场景。
+MySQL 8 is a supported production database; there's no need to migrate immediately for performance reasons. SQLite is not suitable for multi-instance or high-concurrency write scenarios.
 
-启动 MySQL 生产配置：
+Starting MySQL production configuration:
 
 ```bash
-# 在 .env 中设置强密码、固定会话密钥，并指定数据库驱动
+# Set strong passwords, fixed session secret, and specify database driver in .env
 IFORGE_DB_DRIVER=mysql
 MYSQL_ROOT_PASSWORD=<strong-password>
 MYSQL_PASSWORD=<strong-password>
@@ -98,7 +98,7 @@ IFORGE_SESSION_SECRET=<random-secret>
 docker compose --profile mysql up -d --build
 ```
 
-启动 PostgreSQL：
+Starting PostgreSQL:
 
 ```bash
 IFORGE_DB_DRIVER=postgres
@@ -108,17 +108,17 @@ IFORGE_SESSION_SECRET=<random-secret>
 docker compose --profile postgres up -d --build
 ```
 
-生产环境应额外完成：
+Additional steps for production environments:
 
-- 为 `IFORGE_SESSION_SECRET` 设置固定的高熵值；多副本必须共用同一密钥。
-- 将 `IFORGE_CORS_ORIGINS` 收紧为实际前端域名。
-- 不要将数据库端口直接暴露到公网；通过反向代理提供 HTTPS。
-- 为 `data/`（仓库、日志和 SQLite 数据）或外部数据库执行定期备份与恢复演练。
-- 使用外置 Runner 时设置 `IFORGE_DISABLE_BUILTIN_EXECUTOR=true`，并限制 Runner 的权限和网络访问。
+- Set a fixed high-entropy value for `IFORGE_SESSION_SECRET`; multiple replicas must share the same secret.
+- Restrict `IFORGE_CORS_ORIGINS` to the actual frontend domain.
+- Do not expose database ports directly to the public internet; provide HTTPS through a reverse proxy.
+- Perform regular backups and recovery drills for `data/` (repositories, logs, and SQLite data) or external databases.
+- When using external Runners, set `IFORGE_DISABLE_BUILTIN_EXECUTOR=true` and restrict Runner permissions and network access.
 
-### 连接池
+### Connection Pool
 
-MySQL/PostgreSQL 每个 iForge 服务实例默认使用最多 30 个、空闲 10 个数据库连接。可通过 `.env` 调整：
+Each iForge service instance uses up to 30 active and 10 idle database connections by default for MySQL/PostgreSQL. You can adjust this via `.env`:
 
 ```bash
 IFORGE_DB_MAX_IDLE_CONNS=10
@@ -127,23 +127,23 @@ IFORGE_DB_CONN_MAX_LIFETIME_SECONDS=1800
 IFORGE_DB_CONN_MAX_IDLE_TIME_SECONDS=300
 ```
 
-连接上限应按应用实例数与数据库 `max_connections` 一起规划，避免所有实例的连接上限之和超过数据库可承受范围。
+Connection limits should be planned based on the number of application instances and the database's `max_connections` to avoid exceeding the database's capacity when summing all instance limits.
 
-## 架构
+## Architecture
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Nginx 反向代理                            │
-│              iforge-nginx (独立仓库统一管理)                       │
+│                        Nginx Reverse Proxy                     │
+│              iforge-nginx (unified management in separate repo) │
 │                                                                  │
-│   iforge-go.com ──────► iforge-site (文档站)                     │
-│   www.iforge-go.com ──► iforge-site (文档站)                     │
-│   demo.iforge-go.com ─┬─► iforge-web (前端)                     │
-│                       └─► iforge-server (后端)                   │
+│   iforge-go.com ──────► iforge-site (documentation site)        │
+│   www.iforge-go.com ──► iforge-site (documentation site)        │
+│   demo.iforge-go.com ─┬─► iforge-web (frontend)                 │
+│                       └─► iforge-server (backend)               │
 └─────────────────────────────────────────────────────────────────┘
                               │
 ┌─────────────────────────────┼───────────────────────────────────┐
-│                        iForge 平台                               │
+│                        iForge Platform                          │
 │                                                                  │
 │  ┌───────────────┐       HTTP / WebSocket       ┌──────────────┐│
 │  │ Next.js Web   │ ───────────────────────────► │ Go + Fiber   ││
@@ -164,40 +164,40 @@ IFORGE_DB_CONN_MAX_IDLE_TIME_SECONDS=300
 └──────────────────────────────────────────────────────────────────┘
 ```
 
-后端采用分层目录：`handler` 处理 HTTP、`service` 承载业务逻辑、`model` 描述数据模型、`git` 封装 Git 操作、`event` / `subscriber` 处理领域事件，`container` 负责依赖装配。前端采用 Next.js App Router、React 和 Chakra UI。
+The backend uses a layered directory structure: `handler` handles HTTP requests, `service` contains business logic, `model` describes data models, `git` encapsulates Git operations, `event` / `subscriber` handles domain events, and `container` manages dependency injection. The frontend uses Next.js App Router, React, and Chakra UI.
 
-### 相关仓库
+### Related Repositories
 
-| 仓库 | 说明 |
+| Repository | Description |
 |---|---|
-| [iforge](https://gitee.com/guanshiliang/gitgot) | 主平台（server + web） |
-| [iforge-site](https://gitee.com/guanshiliang/iforge-site) | 官方文档站（Docusaurus） |
-| [iforge-runner](https://gitee.com/guanshiliang/iforge-runner) | CI/CD 执行器（独立部署） |
-| [iforge-nginx](https://gitee.com/guanshiliang/iforge-nginx) | Nginx 反向代理配置（统一管理域名路由） |
+| [iforge](https://gitee.com/guanshiliang/gitgot) | Main platform (server + web) |
+| [iforge-site](https://gitee.com/guanshiliang/iforge-site) | Official documentation site (Docusaurus) |
+| [iforge-runner](https://gitee.com/guanshiliang/iforge-runner) | CI/CD executor (deployed independently) |
+| [iforge-nginx](https://gitee.com/guanshiliang/iforge-nginx) | Nginx reverse proxy configuration (unified domain routing management) |
 
-### 当前部署边界
+### Current Deployment Boundaries
 
-当前版本适合单实例自托管。WebSocket 连接、领域事件与内置 CI 调度主要在进程内运行；如需多实例高可用，应先规划共享 Git 存储、跨节点消息分发、分布式锁与外置 Runner。
+The current version is suitable for single-instance self-hosting. WebSocket connections, domain events, and built-in CI scheduling run primarily in-process; for multi-instance high availability, you should first plan shared Git storage, cross-node message distribution, distributed locks, and external Runners.
 
-## 本地开发
+## Local Development
 
-### 依赖
+### Dependencies
 
 - Go 1.26+
 - Node.js 18+
 - Git 2.30+
-- Docker 20.10+（推荐，用于本地依赖和 CI/CD）
+- Docker 20.10+ (recommended, for local dependencies and CI/CD)
 
-### 启动后端
+### Starting the Backend
 
 ```bash
 cd server
 go run ./cmd/server
 ```
 
-后端默认监听 `8081`。如使用 MySQL 或 PostgreSQL，请先配置 `server/config.yaml` 或相应的 `IFORGE_*` 环境变量；可参考 `server/config.prod.mysql.yaml` 与 `server/config.prod.pg.yaml`。
+The backend listens on port `8081` by default. If using MySQL or PostgreSQL, please configure `server/config.yaml` or the corresponding `IFORGE_*` environment variables first; refer to `server/config.prod.mysql.yaml` and `server/config.prod.pg.yaml`.
 
-### 启动前端
+### Starting the Frontend
 
 ```bash
 cd web
@@ -205,47 +205,47 @@ npm install
 npm run dev
 ```
 
-前端默认监听 `http://localhost:3001`。
+The frontend listens on `http://localhost:3001` by default.
 
-## 配置参考
+## Configuration Reference
 
-| 变量 | 说明 | 默认值 |
+| Variable | Description | Default |
 | --- | --- | --- |
-| `IFORGE_HOME` | 数据目录 | `./data` |
-| `IFORGE_HTTP_PORT` | 后端 HTTP / Git HTTP 端口 | `8081` |
-| `IFORGE_SSH_PORT` | Git SSH 端口 | `2022` |
-| `IFORGE_DB_DRIVER` | `sqlite`、`mysql` 或 `postgres` | `sqlite`（Compose） |
-| `IFORGE_SESSION_SECRET` | 会话签名密钥 | 首次启动生成 |
-| `IFORGE_CORS_ORIGINS` | 允许的前端来源 | `*` |
-| `IFORGE_DISABLE_BUILTIN_EXECUTOR` | 禁用内置 CI 执行器 | `false` |
+| `IFORGE_HOME` | Data directory | `./data` |
+| `IFORGE_HTTP_PORT` | Backend HTTP / Git HTTP port | `8081` |
+| `IFORGE_SSH_PORT` | Git SSH port | `2022` |
+| `IFORGE_DB_DRIVER` | `sqlite`, `mysql`, or `postgres` | `sqlite` (Compose) |
+| `IFORGE_SESSION_SECRET` | Session signing secret | Generated on first startup |
+| `IFORGE_CORS_ORIGINS` | Allowed frontend origins | `*` |
+| `IFORGE_DISABLE_BUILTIN_EXECUTOR` | Disable built-in CI executor | `false` |
 
-完整示例见 [`.env.example`](.env.example)；后端文件配置见 [`server/config.example.yaml`](server/config.example.yaml)。
+See [`.env.example`](.env.example) for a complete example; backend file configuration see [`server/config.example.yaml`](server/config.example.yaml).
 
-## 项目结构
+## Project Structure
 
 ```text
 iforge/
-├── server/                 Go/Fiber 后端与 Git 服务
-│   ├── cmd/server/         服务入口
-│   └── internal/           领域模块、路由、服务与基础设施
-├── web/                    Next.js 前端
-├── plugins/                插件示例
-├── docker-compose.yml      本地与容器化部署（支持 SQLite/MySQL/PostgreSQL）
-├── .env.example            环境变量示例
-└── deploy/                 部署配置（已迁移到独立仓库 iforge-nginx）
+├── server/                 Go/Fiber backend and Git service
+│   ├── cmd/server/         Service entry point
+│   └── internal/           Domain modules, routing, services, and infrastructure
+├── web/                    Next.js frontend
+├── plugins/                Plugin examples
+├── docker-compose.yml      Local and containerized deployment (supports SQLite/MySQL/PostgreSQL)
+├── .env.example            Environment variable example
+└── deploy/                 Deployment configuration (moved to separate repository iforge-nginx)
 ```
 
-## 贡献
+## Contributing
 
-欢迎提交 Issue、改进文档和 Pull Request。提交前请尽量完成相关测试与格式化：
+Issues, documentation improvements, and Pull Requests are welcome. Please try to complete relevant tests and formatting before submitting:
 
 ```bash
 cd server && go test ./...
 cd web && npm run lint && npm run build
 ```
 
-请在 PR 中说明变更目的、验证方式，以及是否涉及数据库迁移或部署配置。
+Please explain the purpose of the change, verification method, and whether it involves database migration or deployment configuration in your PR.
 
-## 许可证
+## License
 
-本项目采用 [Apache License 2.0](LICENSE) 及附加条件发布。使用前请阅读完整许可证文本。
+This project is released under the [Apache License 2.0](LICENSE) with additional conditions. Please read the full license text before use.
