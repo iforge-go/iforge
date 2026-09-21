@@ -18,7 +18,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@tanstack/react-virtual": "^3.14.9",
+    "@tanstack/react-virtual": "^3.14.10",
     "dompurify": "^3.4.13",
     "framer-motion": "^10.16.16",
     "highlight.js": "^11.11.1",
